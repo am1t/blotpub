@@ -13,10 +13,15 @@ app.disable('x-powered-by');
 var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
 const getFileName = function (doc) {
-    var currentTime = new Date();
-    return (typeof doc.properties.mp-slug !== 'undefined' && doc.properties.mp-slug) 
-        ? Promise.resolve(doc.properties.mp-slug) 
-        : Promise.resolve("" + Date.now());
+    if(doc.mp.slug){
+        return (typeof doc.mp.slug !== 'undefined' && doc.mp.slug) 
+            ? Promise.resolve(doc.mp.slug.join('')) 
+            : Promise.resolve("" + Date.now());
+    } else if(doc.properties.mp-slug) {
+        return (typeof doc.properties.mp-slug !== 'undefined' && doc.properties.mp-slug) 
+            ? Promise.resolve(doc.properties.mp-slug.join('')) 
+            : Promise.resolve("" + Date.now());
+    }
 };
 
 const getFilePath = function (doc) {
@@ -103,20 +108,6 @@ app.use('/micropub', micropub({
                 return { url: 'https://lab.amitgawande.com/404.html' };
             })
         });
-
-        /*dbx.filesUpload({ path: file_name, contents: content })
-            .then(function (response) {
-                console.log(response);
-                return Promise.resolve().then(function () {
-                    return { url: 'https://lab.amitgawande.com/theme-refresh' };
-                });
-        })
-            .catch(function (err) {
-            console.log(err);
-            return Promise.resolve().then(function () {
-                return {  url: 'https://lab.amitgawande.com/404.html' };
-            });
-        });*/
     }
   
   }));
