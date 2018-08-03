@@ -13,7 +13,7 @@ app.disable('x-powered-by');
 var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
 const getFileName = function (doc) {
-    if(doc.mp.slug){
+    if(doc.mp && doc.mp.slug){
         return (typeof doc.mp.slug !== 'undefined' && doc.mp.slug) 
             ? Promise.resolve(doc.mp.slug.join('')) 
             : Promise.resolve("" + Date.now());
@@ -21,6 +21,8 @@ const getFileName = function (doc) {
         return (typeof doc.properties.mp-slug !== 'undefined' && doc.properties.mp-slug) 
             ? Promise.resolve(doc.properties.mp-slug.join('')) 
             : Promise.resolve("" + Date.now());
+    } else {
+        Promise.resolve("" + Date.now());
     }
 };
 
