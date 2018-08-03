@@ -14,9 +14,11 @@ var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
 const getFileName = function (doc) {
     var currentTime = new Date();
-    return doc.properties.slug ? Promise.resolve(doc.properties.slug) 
+    return (typeof doc.properties.slug !== 'undefined' && doc.properties.slug != '') 
+        ? Promise.resolve(doc.properties.slug) 
         : Promise.resolve("" + currentTime.getFullYear() + "-" +(currentTime.getMonth() + 1) + 
-            "-" + currentTime.getDate() + "-" + currentTime.getHours() + currentTime.getMinutes());
+            "-" + currentTime.getDate() + "-" + currentTime.getHours() 
+            + "" + currentTime.getMinutes());
 };
 
 const getPath = function (doc) {
@@ -60,7 +62,7 @@ app.use('/micropub', micropub({
         4. [TESTING] Content with title and no additional properties
         5. Like and Reply
         */
-        console.log("Generated Micropub Document \n" + micropubDocument);
+        console.log("Generated Micropub Document \n" + JSON.stringify(micropubDocument));
 
         return Promise.resolve().then(() => {
             return Promise.all([
