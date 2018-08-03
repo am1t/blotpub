@@ -17,9 +17,9 @@ const getFileName = function (doc) {
         return (typeof doc.mp.slug !== 'undefined' && doc.mp.slug) 
             ? Promise.resolve("" + doc.mp.slug) 
             : Promise.resolve("" + Date.now());
-    } else if(doc.properties.mp-slug) {
-        return (typeof doc.properties.mp-slug !== 'undefined' && doc.properties.mp-slug) 
-            ? Promise.resolve("" + doc.properties.mp-slug) 
+    } else if(doc.properties["mp-slug"]) {
+        return (typeof doc.properties["mp-slug"] !== 'undefined' && doc.properties["mp-slug"]) 
+            ? Promise.resolve("" + doc.properties["mp-slug"]) 
             : Promise.resolve("" + Date.now());
     } else {
         Promise.resolve("" + Date.now());
