@@ -3,6 +3,7 @@ var micropub = require('micropub-express');
 
 require('isomorphic-fetch');
 var Dropbox = require('dropbox').Dropbox;
+var kebabCase = require('lodash.kebabcase');
 
 const config = require('./config/config');
 
@@ -13,16 +14,16 @@ app.disable('x-powered-by');
 var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
 const getFileName = function (doc) {
-    if(doc.mp && doc.mp.slug){
-        return (typeof doc.mp.slug !== 'undefined' && doc.mp.slug) 
-            ? Promise.resolve("" + doc.mp.slug) 
-            : Promise.resolve("" + Date.now());
-    } else if(doc.properties["mp-slug"]) {
-        return (typeof doc.properties["mp-slug"] !== 'undefined' && doc.properties["mp-slug"]) 
-            ? Promise.resolve("" + doc.properties["mp-slug"]) 
-            : Promise.resolve("" + Date.now());
+    if(doc.mp && typeof doc.mp.slug !== 'undefined' && doc.mp.slug){ 
+        return Promise.resolve("" + doc.mp.slug);
+    } else if(typeof doc.properties["mp-slug"] !== 'undefined' && doc.properties["mp-slug"]) {
+        return Promise.resolve("" + doc.properties["mp-slug"]);
     } else {
-        Promise.resolve("" + Date.now());
+        if(typeof doc.properties.name !== 'undefined' && doc.properties.name){
+            return Promise.resolve(kebabCase(doc.properties.name[0].trim()));
+        } else {
+            return Promise.resolve("" + Date.now());
+        }
     }
 };
 
