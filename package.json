@@ -1,0 +1,22 @@
+{
+  "name": "blotpub",
+  "version": "0.1.0",
+  "description": "A micropub endpoint that accepts requests, formats them into Blot posts and pushes them to a configured Dropbox folder.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "micropub",
+    "indieweb"
+  ],
+  "author": "Amit Gawande <amit.w.gawande@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dropbox": "^4.0.9",
+    "express": "^4.16.3",
+    "isomorphic-fetch": "^2.2.1",
+    "micropub-express": "^0.7.1"
+  }
+}
