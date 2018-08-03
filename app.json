@@ -1,0 +1,42 @@
+{
+    "name": "blotpub",
+    "description": "An endpoint that accepts Micropub requests, creates a simple Blot posts and saves them to a configured Dropbox folder.",
+    "keywords": [
+      "indieweb",
+      "micropub",
+      "api",
+      "blot",
+      "dropbox"
+    ],
+    "repository": "https://github.com/am1t/blotpub",
+    "env": {
+      "AUTH_TOKEN_ENDPOINT": {
+        "description": "URL to verify Micropub token. Refer https://indieweb.org/token-endpoint",
+        "required": true,
+        "value": "https://tokens.indieauth.com/token"
+      },
+      "SITE_URL": {
+        "description": "URL for your site. Example: https://johndoe.example",
+        "required": true
+      },
+  
+      "DROPBOX_TOKEN": {
+        "description": "Dropbox access token to grant access to Dropbox folder. Example: 12345abcde67890fghij09876klmno54321pqrst",
+        "required": true
+      },
+      "POST_PATH": {
+        "description": "Dropbox path where posts are to be stored",
+        "required": true
+      },
+  
+      "MICRO_POST_PATH": {
+        "description": "Dropbox path where micro posts are to be stored. Default to POST_PATH",
+        "required": false
+      }
+    },
+    "buildpacks": [
+      {
+        "url": "heroku/nodejs"
+      }
+    ]
+  }
