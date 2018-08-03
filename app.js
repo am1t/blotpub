@@ -13,19 +13,38 @@ app.disable('x-powered-by');
 var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
 const getFileName = function (doc) {
-    return "post-" + Date.now();
+    var currentTime = new Date();
+    return doc.properties.slug ? Promise.resolve(doc.properties.slug) 
+        : Promise.resolve("" + currentTime.getFullYear() + "-" +(currentTime.getMonth() + 1) + 
+            "-" + currentTime.getDate() + "-" + currentTime.getHours() + currentTime.getMinutes());
 };
 
 const getPath = function (doc) {
     if(doc.properties.name !== undefined && doc.properties.name !== ""){
-        return config.post_path;
+        return Promise.resolve(config.post_path);
     } else {
-        return config.micro_post_path;
+        return Promise.resolve(config.micro_post_path);
     }
 };
 
 const getContent = function (doc) {
-    return doc.properties.content[0];;
+    let content = doc.properties.content;
+    if (!content) { return Promise.resolve(''); }
+
+    if (Array.isArray(content)) {
+        return Promise.all(content.map(content => {
+          if (typeof content !== 'object') {
+            content = { value: content };
+          }
+    
+          if (content.html) {
+            return content.html;
+          }
+    
+          return content.value;
+        }))
+        .then(result => result.filter(value => !!value).join('\n') + '\n');
+      }
 };
 
 //Micropub endpoint
@@ -35,10 +54,10 @@ app.use('/micropub', micropub({
   
     handler: function (micropubDocument, req) {
         /*
-        1. Path from config - post and micro
-        2. Create File name based on title/title-less post or slug property
-        3. Content without title
-        4. Content with title and no additional properties
+        1. [DONE] Path from config - post and micro
+        2. [DONE] Create File name based on title/title-less post or slug property
+        3. [DONE] Content without title
+        4. [TESTING] Content with title and no additional properties
         5. Like and Reply
         */
         console.log("Generated Micropub Document \n" + micropubDocument);
