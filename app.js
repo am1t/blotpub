@@ -14,20 +14,35 @@ var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
 const getFileName = function (doc) {
     var currentTime = new Date();
-    return (typeof doc.properties.slug !== 'undefined' && doc.properties.slug != '') 
-        ? Promise.resolve(doc.properties.slug) 
-        : Promise.resolve("" + currentTime.getFullYear() + "-" +(currentTime.getMonth() + 1) + 
-            "-" + currentTime.getDate() + "-" + currentTime.getHours() 
-            + "" + currentTime.getMinutes());
+    return (typeof doc.properties.mp-slug !== 'undefined' && doc.properties.mp-slug) 
+        ? Promise.resolve(doc.properties.mp-slug) 
+        : Promise.resolve("" + Date.now());
 };
 
-const getPath = function (doc) {
+const getFilePath = function (doc) {
     if(doc.properties.name !== undefined && doc.properties.name !== ""){
         return Promise.resolve(config.post_path);
     } else {
         return Promise.resolve(config.micro_post_path);
     }
 };
+
+const getFileContent = function(doc){
+    return Promise.all([
+        getMetadata(doc),
+        getContent(doc)
+      ])
+        .then(result => result.join('\n'));
+};
+
+const getMetadata = function (doc) {
+    var metadata = "" + "title : " + (doc.properties.name ? doc.properties.name.join('') : '') + "\n";
+    if(doc.properties.category){
+        metadata += "tags : " + doc.properties.category.join(', ') + "\n";
+    }
+
+    return metadata;
+}
 
 const getContent = function (doc) {
     let content = doc.properties.content;
@@ -67,8 +82,8 @@ app.use('/micropub', micropub({
         return Promise.resolve().then(() => {
             return Promise.all([
                 getFileName(micropubDocument),
-                getPath(micropubDocument),
-                getContent(micropubDocument)
+                getFilePath(micropubDocument),
+                getFileContent(micropubDocument)
             ]);
         })
         .then(result => {
