@@ -6,7 +6,7 @@ An endpoint that accepts [Micropub](http://micropub.net/) requests, creates a si
 Supported:
 * Creation of posts with or without titles
 * Metadata creation for tags, slugs
-* 
+
 Unsupported:
 * Media handling, image files
 * Replacing an existing post with a new version
@@ -40,7 +40,7 @@ Variable | Description
 -------- | -----------
 `AUTH_TOKEN_ENDPOINT` | URL to verify Micropub token. Example: `https://tokens.indieauth.com/token`
 `SITE_URL` | URL for your site. Example: `https://johndoe.example`
-`DROPBOX_TOKEN` | [Dropbox access token](https://dropbox.github.io/dropbox-api-v2-explorer/#file_requests_create) to grant access to your Dropbox folder. Example: `12345abcde67890fghij09876klmno54321pqrst`
+`DROPBOX_TOKEN` | [Dropbox access token](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/) to grant access to your Dropbox folder. Example: `12345abcde67890fghij09876klmno54321pqrst`
 `POST_PATH` | Dropbox `path` where posts are to be stored
 `MICRO_POST_PATH` | (Optional) Dropbox `path` where micro posts are to be stored. Default to `POST_PATH`
 
