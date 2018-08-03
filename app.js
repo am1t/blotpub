@@ -104,11 +104,10 @@ app.use('/micropub', micropub({
             return dbx.filesUpload({ path: path + file_name + ".md", contents: content })
             .then(function (response) {
                 console.log(response);
-                return { url: 'https://lab.amitgawande.com/theme-refresh' };
+                return { url: config.site_url + "/" + file_name };
             })
             .catch(function (err) {
                 console.log(err);
-                return { url: 'https://lab.amitgawande.com/404.html' };
             })
         });
     }
