@@ -42,7 +42,6 @@ app.use('/micropub', micropub({
         5. Like and Reply
         */
         console.log("Generated Micropub Document \n" + micropubDocument);
-        console.log(content + '\n'+ path + '\n' + file_name);
 
         return Promise.resolve().then(() => {
             return Promise.all([
@@ -55,6 +54,8 @@ app.use('/micropub', micropub({
             var file_name = result[0];
             var path = result[1];
             var content = result[2];
+
+            console.log(content + '\n'+ path + '\n' + file_name);
 
             return dbx.filesUpload({ path: path + file_name + ".md", contents: content })
             .then(function (response) {
