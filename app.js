@@ -46,12 +46,14 @@ const getFileContent = function(doc){
 const getMetadata = function (doc) {
     var metadata = "" + "title : " + (doc.properties.name ? doc.properties.name.join('') : '') + "\n";
     
-    if(doc.properties.published){
-        metadata += "date : " + doc.properties.published[0] + "\n";
-    } else {
-        var today = new Date();
-        metadata += "date : " + today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate()
-            + " " + today.getHours() + ":" + today.getMinutes() + "\n"
+    if(typeof config.set_date !== 'undefined' && config.set_date){
+        if(doc.properties.published){
+            metadata += "date : " + doc.properties.published[0] + "\n";
+        } else {
+            var today = new Date();
+            metadata += "date : " + today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate()
+                + " " + today.getHours() + ":" + today.getMinutes() + "\n"
+        }
     }
 
     if(doc.properties.category){
