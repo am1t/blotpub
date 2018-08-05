@@ -28,11 +28,18 @@
         "description": "Dropbox path where posts are to be stored",
         "required": true
       },
-  
       "MICRO_POST_PATH": {
         "description": "Dropbox path where micro posts are to be stored. Default to POST_PATH",
         "required": false
-      }
+      },
+      "SET_DATE": {
+        "description": "Flag to enable post creation date to be set explicitly in metadata",
+        "required": false
+      },
+      "TZ": {
+        "description": "Overide default timezone for dates to the preferred one",
+        "required": false
+      },
     },
     "buildpacks": [
       {
