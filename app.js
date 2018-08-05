@@ -45,8 +45,23 @@ const getFileContent = function(doc){
 
 const getMetadata = function (doc) {
     var metadata = "" + "title : " + (doc.properties.name ? doc.properties.name.join('') : '') + "\n";
+    
+    if(doc.properties.published){
+        metadata += "date : " + doc.properties.published[0] + "\n";
+    } else {
+        var today = new Date();
+        metadata += "date : " + today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate()
+            + " " + today.getHours() + ":" + today.getMinutes() + "\n"
+    }
+
     if(doc.properties.category){
         metadata += "tags : " + doc.properties.category.join(', ') + "\n";
+    }
+
+    if(doc.properties["in-reply-to"] && doc.properties["in-reply-to"][0] !== ""){
+        metadata += "in-reply-to : " + doc.properties["in-reply-to"][0] + "\n";
+    } else if(doc.properties["like-of"] && doc.properties["like-of"][0] !== ""){
+        metadata += "like-of : " + doc.properties["like-of"][0] + "\n";
     }
 
     return metadata;
