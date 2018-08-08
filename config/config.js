@@ -10,7 +10,7 @@ const config = {
     post_path: env['POST_PATH'],
     micro_post_path: env['MICRO_POST_PATH'] !== undefined ? env['MICRO_POST_PATH'] : env['POST_PATH'],
     site_url: env['SITE_URL'],
-    set_date: JSON.parse(env['SET_DATE'])
+    set_date: JSON.parse(env['SET_DATE'] ? env['SET_DATE'] : false)
 }
 
 module.exports = config;

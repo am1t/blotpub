@@ -84,15 +84,17 @@ const getTitle = function(doc) {
         return Promise.resolve("\n");
     }
 
-    request(url, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            var $ = cheerio.load(body);
-            var title = $("head > title").text().trim();
-            return Promise.resolve(title_pre + " : " + title + "\n");
-        } else {
-            console.log('Failed to load the title for ', url);
-            return Promise.resolve(title_pre + " : a post\n");
-        }
+    return new Promise((resolve, reject) => {
+        request(url, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+                var $ = cheerio.load(body);
+                var title = $("head > title").text().trim();
+                resolve(title_pre + " : " + title + "\n");
+            } else {
+                console.log('Failed to load the title for ', url);
+                resolve(title_pre + " : a post\n");
+            }
+        });
     });
 }
 
