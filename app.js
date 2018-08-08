@@ -43,7 +43,7 @@ const getFileContent = function(doc){
         getTitle(doc),
         getContent(doc)
       ])
-        .then(result => result.filter(value => !!value).join('\n'));
+        .then(result => result.join('\n'));
 };
 
 const getMetadata = function (doc) {
@@ -81,7 +81,7 @@ const getTitle = function(doc) {
         url = doc.properties["like-of"][0];
         title_pre = "like-of-title";
     } else {
-        Promise.resolve(url);
+        Promise.resolve("\n");
     }
 
     request(url, function (error, response, body) {
