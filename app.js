@@ -1,9 +1,10 @@
 const express = require('express');
-var micropub = require('micropub-express');
+const micropub = require('micropub-express');
 
 require('isomorphic-fetch');
-var Dropbox = require('dropbox').Dropbox;
-var kebabCase = require('lodash.kebabcase');
+const Dropbox = require('dropbox').Dropbox;
+const kebabCase = require('lodash.kebabcase');
+const cheerio = require('cheerio');
 
 const config = require('./config/config');
 
@@ -38,9 +39,10 @@ const getFilePath = function (doc) {
 const getFileContent = function(doc){
     return Promise.all([
         getMetadata(doc),
+        getTitle(doc),
         getContent(doc)
       ])
-        .then(result => result.join('\n'));
+        .then(result => result.filter(value => !!value).join('\n'));
 };
 
 const getMetadata = function (doc) {
@@ -66,7 +68,31 @@ const getMetadata = function (doc) {
         metadata += "like-of : " + doc.properties["like-of"][0] + "\n";
     }
 
-    return metadata;
+    Promise.resolve(metadata.replace(/\n$/, ""));
+}
+
+const getTitle = function(doc) {
+    let url = "", title_pre = "";
+    if(doc.properties["in-reply-to"] && doc.properties["in-reply-to"][0] !== ""){
+        url = doc.properties["in-reply-to"][0];
+        title_pre = "in-reply-to-title";
+    } else if(doc.properties["like-of"] && doc.properties["like-of"][0] !== ""){
+        url = doc.properties["like-of"][0];
+        title_pre = "like-of-title";
+    } else {
+        Promise.resolve(url);
+    }
+
+    request(url, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            var $ = cheerio.load(body);
+            var title = $("head > title").text().trim();
+            Promise.resolve(title_pre + " : " + title + "\n");
+        } else {
+            console.log('Failed to load the title for ', url);
+            Promise.resolve(title_pre + " : a post\n");
+        }
+    });
 }
 
 const getContent = function (doc) {
@@ -95,13 +121,6 @@ app.use('/micropub', micropub({
     tokenReference: config.token,
   
     handler: function (micropubDocument, req) {
-        /*
-        1. [DONE] Path from config - post and micro
-        2. [DONE] Create File name based on title/title-less post or slug property
-        3. [DONE] Content without title
-        4. [TESTING] Content with title and no additional properties
-        5. Like and Reply
-        */
         console.log("Generated Micropub Document \n" + JSON.stringify(micropubDocument));
 
         return Promise.resolve().then(() => {

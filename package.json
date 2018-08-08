@@ -14,6 +14,7 @@
   "author": "Amit Gawande <amit.w.gawande@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "dropbox": "^4.0.9",
     "express": "^4.16.3",
     "isomorphic-fetch": "^2.2.1",
