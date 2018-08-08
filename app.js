@@ -43,7 +43,7 @@ const getFileContent = function(doc){
         getTitle(doc),
         getContent(doc)
       ])
-        .then(result => result.join('\n'));
+        .then(result => result.filter(value => !!value).join('\n'));
 };
 
 const getMetadata = function (doc) {
@@ -69,7 +69,7 @@ const getMetadata = function (doc) {
         metadata += "like-of : " + doc.properties["like-of"][0] + "\n";
     }
 
-    Promise.resolve(metadata.replace(/\n$/, ""));
+    return Promise.resolve(metadata.replace(/\n$/, ""));
 }
 
 const getTitle = function(doc) {
@@ -81,17 +81,17 @@ const getTitle = function(doc) {
         url = doc.properties["like-of"][0];
         title_pre = "like-of-title";
     } else {
-        Promise.resolve("\n");
+        return Promise.resolve("\n");
     }
 
     request(url, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             var $ = cheerio.load(body);
             var title = $("head > title").text().trim();
-            Promise.resolve(title_pre + " : " + title + "\n");
+            return Promise.resolve(title_pre + " : " + title + "\n");
         } else {
             console.log('Failed to load the title for ', url);
-            Promise.resolve(title_pre + " : a post\n");
+            return Promise.resolve(title_pre + " : a post\n");
         }
     });
 }
@@ -135,8 +135,6 @@ app.use('/micropub', micropub({
             var file_name = result[0];
             var path = result[1];
             var content = result[2];
-
-            console.log(content + '\n'+ path + '\n' + file_name);
 
             return dbx.filesUpload({ path: path + file_name + ".md", contents: content })
             .then(function (response) {
