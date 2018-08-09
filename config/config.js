@@ -9,6 +9,8 @@ const config = {
     dropbox_token: env['DROPBOX_TOKEN'],
     post_path: env['POST_PATH'],
     micro_post_path: env['MICRO_POST_PATH'] !== undefined ? env['MICRO_POST_PATH'] : env['POST_PATH'],
+    photo_path: env['PHOTO_PATH'] !== undefined ? env['PHOTO_PATH'] : env['POST_PATH'],
+    photo_uri: env['PHOTO_RELATIVE_URI'] !== undefined ? env['PHOTO_RELATIVE_URI'] : '',
     site_url: env['SITE_URL'],
     set_date: JSON.parse(env['SET_DATE'] ? env['SET_DATE'] : false)
 }

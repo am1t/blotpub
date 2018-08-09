@@ -42,6 +42,8 @@ Variable | Description
 `SITE_URL` | URL for your site. Example: `https://johndoe.example`
 `DROPBOX_TOKEN` | [Dropbox access token](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/) to grant access to your Dropbox folder. Example: `12345abcde67890fghij09876klmno54321pqrst`
 `POST_PATH` | Dropbox `path` where posts are to be stored
+`PHOTO_PATH` | (Optional) Dropbox path where images are to be stored. Default to POST_PATH
+`PHOTO_RELATIVE_URI` | (Optional) Relative public URI to uploaded images (ignoring Site URL). Default to blank
 `MICRO_POST_PATH` | (Optional) Dropbox `path` where micro posts are to be stored. Default to `POST_PATH`
 `SET_DATE` | (Optional) A `boolean` flag which if set to `true`, date of the post creation is explicitly added to post metadata
 `TZ` | (Optional - only if `SET_DATE` set) By default, post creation date would be in `UTC`. This can be overridden by setting this to the preferred timezone using the [TZ Database Timezone format](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones)

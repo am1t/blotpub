@@ -31,7 +31,15 @@
       "MICRO_POST_PATH": {
         "description": "Dropbox path where micro posts are to be stored. Default to POST_PATH",
         "required": false
+      },      
+      "PHOTO_PATH": {
+        "description": "Dropbox path where images are to be stored. Default to POST_PATH",
+        "required": false
       },
+      "PHOTO_RELATIVE_URI": {
+        "description": "Relative public URI to uploaded images (ignoring Site URL). Default to blank",
+        "required": false
+      },      
       "SET_DATE": {
         "description": "Flag to enable post creation date to be set explicitly in metadata",
         "required": false

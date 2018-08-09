@@ -15,6 +15,13 @@ app.disable('x-powered-by');
 
 var dbx = new Dropbox({ accessToken: config.dropbox_token });
 
+const isEmpty = function (value) {
+    if (typeof value === 'undefined' && !value) { return true; }
+    if (Array.isArray(value) && value.length === 0) { return true; }
+    if (typeof value === 'object' && Object.keys(value).length === 0) { return true; }
+    return false;
+  };
+
 const getFileName = function (doc) {
     if(doc.mp && typeof doc.mp.slug !== 'undefined' && doc.mp.slug){ 
         return Promise.resolve("" + doc.mp.slug);
@@ -41,6 +48,7 @@ const getFileContent = function(doc){
     return Promise.all([
         getMetadata(doc),
         getTitle(doc),
+        handleFiles(doc),
         getContent(doc)
       ])
         .then(result => result.filter(value => !!value).join('\n'));
@@ -94,7 +102,7 @@ const getTitle = function(doc) {
         url = doc.properties["like-of"][0];
         title_pre = "like-of-title";
     } else {
-        return Promise.resolve("\n");
+        return Promise.resolve("");
     }
 
     return new Promise((resolve, reject) => {
@@ -102,13 +110,41 @@ const getTitle = function(doc) {
             if (!error && response.statusCode === 200) {
                 var $ = cheerio.load(body);
                 var title = $("head > title").text().trim();
-                resolve(title_pre + " : " + title + "\n");
+                resolve(title_pre + " : " + title);
             } else {
                 console.log('Failed to load the title for ', url);
-                resolve(title_pre + " : a post\n");
+                resolve(title_pre + " : a post");
             }
         });
     });
+}
+
+const handleFiles = function(doc) {
+    if(isEmpty(doc.properties.files) || isEmpty(doc.properties.files.photo)){
+        Promise.resolve("\n");
+    }
+    let files = doc.properties.files.photo;
+    return Promise.all(
+        (files || []).map(file => {
+            photoName = config.photo_path + file.filename;
+            photoContent = file.buffer.data;
+            photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.file_name;
+            console.log(photoName + "\n" + photoURL);
+            return dbx.filesUpload({ path: photoName, contents: photoContent })
+            .then(response => {
+                if (!response) { console.log('Failed to upload the photos'); return "";}
+                else{
+                    console.log('Photo uploaded at ' + response.path_lower);
+                    return photoURL;
+                }
+            })
+            .catch(err => {
+                console.log('Failed to upload the photos\n' + err); 
+                return "";
+            });
+        })
+    ).then(result => "photo: " + result.filter(value => !!value).join(', ') + '\n');
+
 }
 
 const getContent = function (doc) {
@@ -153,7 +189,7 @@ app.use('/micropub', micropub({
 
             return dbx.filesUpload({ path: path + file_name + ".md", contents: content })
             .then(function (response) {
-                console.log(response);
+                console.log('Post file uploaded at ' + response.path_lower);
                 return { url: config.site_url + "/" + file_name };
             })
             .catch(function (err) {
