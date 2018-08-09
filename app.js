@@ -133,19 +133,20 @@ const handleFiles = function(doc) {
         (files || []).map(file => {
             photoName = config.photo_path + file.filename;
             photoContent = tobase64(file.buffer);
-            photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.file_name;
-            console.log(photoName + "\n" + photoURL);
-            return dbx.filesUpload({ path: photoName, contents: photoContent })
-            .then(response => {
-                if (!response) { console.log('Failed to upload the photos'); return "";}
-                else{
-                    console.log('Photo uploaded at ' + response.path_lower);
-                    return photoURL;
-                }
-            })
-            .catch(err => {
-                console.log('Failed to upload the photos\n' + err); 
-                return "";
+            photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
+            return new Promise((resolve,reject) => {
+                dbx.filesUpload({ path: photoName, contents: photoContent })
+                .then(response => {
+                    if (!response) { console.log('Failed to upload the photos'); resolve("");}
+                    else{
+                        console.log('Photo uploaded at ' + response.path_lower);
+                        resolve(photoURL);
+                    }
+                })
+                .catch(err => {
+                    console.log('Failed to upload the photos\n' + err); 
+                    resolve("");
+                });
             });
         })
     ).then(result => "photo: " + result.filter(value => !!value).join(', ') + '\n');
