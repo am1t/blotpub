@@ -119,6 +119,11 @@ const getTitle = function(doc) {
     });
 }
 
+const tobase64 = function (text) {
+    const data = text instanceof Buffer ? text : Buffer.from(text);
+    return data.toString('base64');
+};
+
 const handleFiles = function(doc) {
     if(isEmpty(doc.properties.files) || isEmpty(doc.properties.files.photo)){
         Promise.resolve("\n");
@@ -127,7 +132,7 @@ const handleFiles = function(doc) {
     return Promise.all(
         (files || []).map(file => {
             photoName = config.photo_path + file.filename;
-            photoContent = file.buffer.data;
+            photoContent = tobase64(file.buffer.data);
             photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.file_name;
             console.log(photoName + "\n" + photoURL);
             return dbx.filesUpload({ path: photoName, contents: photoContent })
