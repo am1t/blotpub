@@ -125,10 +125,10 @@ const tobase64 = function (text) {
 };
 
 const handleFiles = function(doc) {
-    if(isEmpty(doc.properties.files) || isEmpty(doc.properties.files.photo)){
-        Promise.resolve("\n");
+    if(isEmpty(doc.files) || isEmpty(doc.files.photo)){
+        return Promise.resolve("\n");
     }
-    let files = doc.properties.files.photo;
+    let files = doc.files.photo;
     return Promise.all(
         (files || []).map(file => {
             photoName = config.photo_path + file.filename;
