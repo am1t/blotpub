@@ -132,7 +132,7 @@ const handleFiles = function(doc) {
     return Promise.all(
         (files || []).map(file => {
             photoName = config.photo_path + file.filename;
-            photoContent = tobase64(file.buffer.data);
+            photoContent = tobase64(file.buffer);
             photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.file_name;
             console.log(photoName + "\n" + photoURL);
             return dbx.filesUpload({ path: photoName, contents: photoContent })
