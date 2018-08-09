@@ -63,6 +63,19 @@ const getMetadata = function (doc) {
         metadata += "tags : " + doc.properties.category.join(', ') + "\n";
     }
 
+    if(doc.properties.photo){
+        if(Array.isArray(doc.properties.photo)){
+            if(doc.properties.photo[0].value){
+                metadata += "photo : " + doc.properties.photo[0].value + "\n";
+                metadata += "photo-alt : " + doc.properties.photo[0].alt + "\n";
+            } else {
+                metadata += "photo : " + doc.properties.photo.join(', ') + "\n";
+            }
+        } else {
+            metadata += "photo : " + doc.properties.photo + "\n";
+        }
+    }    
+
     if(doc.properties["in-reply-to"] && doc.properties["in-reply-to"][0] !== ""){
         metadata += "in-reply-to : " + doc.properties["in-reply-to"][0] + "\n";
     } else if(doc.properties["like-of"] && doc.properties["like-of"][0] !== ""){
