@@ -2,15 +2,17 @@
 
 An endpoint that accepts [Micropub](http://micropub.net/) requests, creates a simple Blot posts and saves them to a configured Dropbox folder. This enables updating a Blot blog through a [Micropub client](https://indieweb.org/Micropub/Clients).
 
-### _Early alpha release_
-Supported:
-* Creation of posts with or without titles
+Currently, the endpoint supports the following.
+
+* Creation of posts with titles ([articles](https://indieweb.org/article)) and without titles ([notes](https://indieweb.org/note))
 * Metadata creation for tags, slugs and published date
 * Support for [like](https://indieweb.org/like) and [reply](https://indieweb.org/reply) post types. Added as metadata `like-of` and `in-reply-to`.
+* Uploading of image files as `multipart` data. Added as metadata `photo`
 
-Unsupported:
-* Media handling, image files
-* Replacing an existing post with a new version
+## TODO
+* [ ] Implement repost, bookmark post types
+* [ ] Add support for media endpoint
+* [ ] Add support for updating and deleting the posts
 
 ## Requirements
 Requires at least Node.js 6.0.0.
@@ -21,6 +23,8 @@ This is a self-hosteable Micropub endpoint. Install it as a normal Node.js appli
 You can also deploy directly to Heroku.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/am1t/blotpub)
+
+**Note**: This is an alpha release and there may be some edge cases that aren't handled. If you find one, please [report an issue](https://github.com/am1t/blotpub/issues/new).
 
 ## Endpoint discovery
 Once you have deployed the application, your Micropub endpoint can be found at `/micropub` e.g. `https://example.com/micropub`.
@@ -50,3 +54,10 @@ Variable | Description
 
 ## Modules used
 * [micropub-express](https://github.com/voxpelli/node-micropub-express) – an [Express](http://expressjs.com/) Micropub endpoint that accepts and verifies Micropub requests and calls a callback with a parsed `micropubDocument`.
+
+## Releases
+Version | Date | Notes
+-------:|:----:|:-----
+0.3 | 2018-08-15 | Added support for photo uploads multipart
+0.2 | 2018-08-08 | Added support for like/reply post types
+0.1 | 2018-08-05 | Initial release with support for notes and articles 
