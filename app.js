@@ -6,9 +6,6 @@ require('isomorphic-fetch');
 const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
-const dbxstream = require('dropbox-stream');
-const streamifier = require('streamifier');
-
 const config = require('./config/config');
 
 const app = express();
@@ -134,33 +131,8 @@ const handleFiles = function(doc) {
     return Promise.all(
         (files || []).map(file => {
             photoName = config.photo_path + file.filename;
-            photoContent = tobase64(file.buffer);
             photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
             return new Promise((resolve,reject) => {
-                /*const up =  dbxstream.createDropboxUploadStream({
-                    token: config.dropbox_token,
-                    filepath: photoName,
-                    chunkSize: 1000 * 1024,
-                    autorename: true
-                  })
-                  .on('error', err => {
-                    console.log('Failed to upload the photos\n' + err); 
-                    resolve("");                      
-                  })
-                  .on('progress', res => console.log(res))
-                  .on('metadata', metadata => {
-                    if (!metadata) { console.log('Failed to upload the photos'); resolve("");}
-                    else{
-                        console.log("METADATA : " + metadata);
-                        resolve(photoURL);    
-                    }                      
-                  });
-
-                streamifier.createReadStream(file.buffer).pipe(up)
-                .on('finish', () => {
-                    console.log('Photo uploaded completed');
-                });*/
-
                 dbx.filesUpload({ path: photoName, contents: file.buffer })
                 .then(response => {
                     if (!response) { console.log('Failed to upload the photos'); resolve("");}
