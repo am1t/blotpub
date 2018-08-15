@@ -156,7 +156,7 @@ const handleFiles = function(doc) {
                     }                      
                   });
 
-                streamifier.createReadStream(photoContent).pipe(up)
+                streamifier.createReadStream(file.buffer).pipe(up)
                 .on('finish', () => {
                     console.log('Photo uploaded completed');
                 });
