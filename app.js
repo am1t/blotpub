@@ -137,7 +137,7 @@ const handleFiles = function(doc) {
             photoContent = tobase64(file.buffer);
             photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
             return new Promise((resolve,reject) => {
-                const up =  dbxstream.createDropboxUploadStream({
+                /*const up =  dbxstream.createDropboxUploadStream({
                     token: config.dropbox_token,
                     filepath: photoName,
                     chunkSize: 1000 * 1024,
@@ -159,9 +159,9 @@ const handleFiles = function(doc) {
                 streamifier.createReadStream(file.buffer).pipe(up)
                 .on('finish', () => {
                     console.log('Photo uploaded completed');
-                });
+                });*/
 
-                /*dbx.filesUpload({ path: photoName, contents: photoContent })
+                dbx.filesUpload({ path: photoName, contents: file.buffer })
                 .then(response => {
                     if (!response) { console.log('Failed to upload the photos'); resolve("");}
                     else{
@@ -172,7 +172,7 @@ const handleFiles = function(doc) {
                 .catch(err => {
                     console.log('Failed to upload the photos\n' + err); 
                     resolve("");
-                });*/
+                });
             });
         })
     ).then(result => "photo: " + result.filter(value => !!value).join(', ') + '\n');
