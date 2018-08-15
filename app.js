@@ -6,6 +6,7 @@ require('isomorphic-fetch');
 const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
+const dbxstream = require('dropbox-stream');
 
 const config = require('./config/config');
 
@@ -135,7 +136,26 @@ const handleFiles = function(doc) {
             photoContent = tobase64(file.buffer);
             photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
             return new Promise((resolve,reject) => {
-                dbx.filesUpload({ path: photoName, contents: photoContent })
+                dbxstream.createDropboxUploadStream({
+                    token: config.dropbox_token,
+                    filepath: photoContent,
+                    chunkSize: 1000 * 1024,
+                    autorename: true
+                  })
+                  .on('error', err => {
+                    console.log('Failed to upload the photos\n' + err); 
+                    resolve("");                      
+                  })
+                  .on('progress', res => console.log(res))
+                  .on('metadata', metadata => {
+                    if (!metadata) { console.log('Failed to upload the photos'); resolve("");}
+                    else{
+                        console.log('Photo uploaded at ' + metadata);
+                        resolve(photoURL);
+                    }                      
+                  });
+
+                /*dbx.filesUpload({ path: photoName, contents: photoContent })
                 .then(response => {
                     if (!response) { console.log('Failed to upload the photos'); resolve("");}
                     else{
@@ -146,7 +166,7 @@ const handleFiles = function(doc) {
                 .catch(err => {
                     console.log('Failed to upload the photos\n' + err); 
                     resolve("");
-                });
+                });*/
             });
         })
     ).then(result => "photo: " + result.filter(value => !!value).join(', ') + '\n');
