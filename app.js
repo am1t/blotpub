@@ -7,6 +7,7 @@ const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
 const dbxstream = require('dropbox-stream');
+const streamifier = require('streamifier');
 
 const config = require('./config/config');
 
