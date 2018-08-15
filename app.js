@@ -136,9 +136,9 @@ const handleFiles = function(doc) {
             photoContent = tobase64(file.buffer);
             photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
             return new Promise((resolve,reject) => {
-                dbxstream.createDropboxUploadStream({
+                const up =  dbxstream.createDropboxUploadStream({
                     token: config.dropbox_token,
-                    filepath: photoContent,
+                    filepath: photoName,
                     chunkSize: 1000 * 1024,
                     autorename: true
                   })
@@ -150,10 +150,15 @@ const handleFiles = function(doc) {
                   .on('metadata', metadata => {
                     if (!metadata) { console.log('Failed to upload the photos'); resolve("");}
                     else{
-                        console.log('Photo uploaded at ' + metadata);
-                        resolve(photoURL);
+                        console.log("METADATA : " + metadata);
+                        resolve(photoURL);    
                     }                      
                   });
+
+                streamifier.createReadStream(photoContent).pipe(up)
+                .on('finish', () => {
+                    console.log('Photo uploaded completed');
+                });
 
                 /*dbx.filesUpload({ path: photoName, contents: photoContent })
                 .then(response => {

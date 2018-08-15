@@ -21,6 +21,7 @@
     "isomorphic-fetch": "^2.2.1",
     "lodash.kebabcase": "^4.1.1",
     "micropub-express": "^0.7.1",
-    "request": "^2.87.0"
+    "request": "^2.87.0",
+    "streamifier": "^0.1.1"
   }
 }
