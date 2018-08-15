@@ -130,8 +130,8 @@ const handleFiles = function(doc) {
     let files = doc.files.photo;
     return Promise.all(
         (files || []).map(file => {
-            photoName = config.photo_path + file.filename;
-            photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
+            let photoName = config.photo_path + file.filename;
+            let photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
             return new Promise((resolve,reject) => {
                 dbx.filesUpload({ path: photoName, contents: file.buffer })
                 .then(response => {
