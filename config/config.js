@@ -7,6 +7,7 @@ const config = {
     }
     : {},
     dropbox_token: env['DROPBOX_TOKEN'],
+    default_tag : env['DEFAULT_TAG'],
     post_path: env['POST_PATH'],
     micro_post_path: env['MICRO_POST_PATH'] !== undefined ? env['MICRO_POST_PATH'] : env['POST_PATH'],
     photo_path: env['PHOTO_PATH'] !== undefined ? env['PHOTO_PATH'] : env['POST_PATH'],

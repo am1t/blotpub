@@ -68,6 +68,8 @@ const getMetadata = function (doc) {
 
     if(doc.properties.category){
         metadata += "tags : " + doc.properties.category.join(', ') + "\n";
+    } else if(typeof config.default_tag !== 'undefined'){
+        metadata += "tags : " + config.default_tag + "\n";
     }
 
     if(doc.properties.photo){
@@ -85,8 +87,10 @@ const getMetadata = function (doc) {
 
     if(doc.properties["in-reply-to"] && doc.properties["in-reply-to"][0] !== ""){
         metadata += "in-reply-to : " + doc.properties["in-reply-to"][0] + "\n";
+        metadata += "is-social : yes\n";
     } else if(doc.properties["like-of"] && doc.properties["like-of"][0] !== ""){
         metadata += "like-of : " + doc.properties["like-of"][0] + "\n";
+        metadata += "is-social : yes\n";
     }
 
     return Promise.resolve(metadata.replace(/\n$/, ""));
