@@ -163,8 +163,6 @@ const getContent = function (doc) {
 const syndicate = function(doc) {
     if(isEmpty(doc.properties['mp-syndicate-to'])){
         return Promise.resolve('\n');
-    } else if(isEmpty(doc.mp) || isEmpty(doc.mp['syndicate-to'])){
-        return Promise.resolve('\n');
     }
 
     let syndicate_to = [].concat(!isEmpty(doc.properties['mp-syndicate-to']) 
