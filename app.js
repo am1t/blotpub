@@ -177,7 +177,7 @@ const syndicate = function(doc) {
         content = content.substr(0, 500) + "...";
         let options = {
             url : MASTO_API,
-            body : {'status' :  content},
+            body : 'status=' +  content,
             headers : {'Authorization': 'Bearer ' + config.mastodon_token}
         }
         return new Promise((resolve,reject) => {
