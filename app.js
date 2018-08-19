@@ -195,7 +195,7 @@ const syndicate = function(doc) {
                     }
                 });
             });            
-        });
+        }).then(synd_meta => synd_meta);
     } else {
         return Promise.resolve('\n');
     }
