@@ -13,7 +13,11 @@ const config = {
     photo_path: env['PHOTO_PATH'] !== undefined ? env['PHOTO_PATH'] : env['POST_PATH'],
     photo_uri: env['PHOTO_RELATIVE_URI'] !== undefined ? env['PHOTO_RELATIVE_URI'] : '',
     site_url: env['SITE_URL'],
-    set_date: JSON.parse(env['SET_DATE'] ? env['SET_DATE'] : false)
+    set_date: JSON.parse(env['SET_DATE'] ? env['SET_DATE'] : false),
+    syndicate_to : env['SYNDICATE_TO'] !== undefined ? [].concat(JSON.parse(env['SYNDICATE_TO'])) : [],
+    mastodon_instance : env['MASTODON_INSTANCE'],
+    mastodon_token : env['MASTODON_TOKEN'],
+    media_endpoint : env['MEDIA_ENDPOINT']
 }
 
 module.exports = config;

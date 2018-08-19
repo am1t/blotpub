@@ -43,16 +43,6 @@ const getFilePath = function (doc) {
     }
 };
 
-const getFileContent = function(doc){
-    return Promise.all([
-        getMetadata(doc),
-        getTitle(doc),
-        handleFiles(doc),
-        getContent(doc)
-      ])
-        .then(result => result.filter(value => !!value).join('\n'));
-};
-
 const getMetadata = function (doc) {
     var metadata = "" + "title : " + (doc.properties.name ? doc.properties.name.join('') : '') + "\n";
     
@@ -122,14 +112,9 @@ const getTitle = function(doc) {
     });
 }
 
-const tobase64 = function (text) {
-    const data = text instanceof Buffer ? text : Buffer.from(text);
-    return data.toString('base64');
-};
-
 const handleFiles = function(doc) {
     if(isEmpty(doc.files) || isEmpty(doc.files.photo)){
-        return Promise.resolve("\n");
+        return Promise.resolve('');
     }
     let files = doc.files.photo;
     return Promise.all(
@@ -151,7 +136,7 @@ const handleFiles = function(doc) {
                 });
             });
         })
-    ).then(result => "photo: " + result.filter(value => !!value).join(', ') + '\n');
+    ).then(result => "photo: " + result.filter(value => !!value).join(', '));
 
 }
 
@@ -175,11 +160,65 @@ const getContent = function (doc) {
       }
 };
 
+const syndicate = function(doc) {
+    if(isEmpty(doc['mp-syndicate-to'])){
+        return Promise.resolve('\n');
+    }
+
+    let syndicate_to = [].concat(doc['mp-syndicate-to']);
+    if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
+        let MASTO_API = config.mastodon_instance + "/api/v1/statuses";
+        let content = getContent(doc);
+        content = content.replace("\'", "'");
+        content = content.replace('\&quot;', '\"');
+        content = encodeURIComponent(content);
+        content = content.substr(0, 500) + "...";
+        let options = {
+            url : MASTO_API,
+            status : content,
+            headers : {'Authorization': 'Bearer ' + config.mastodon_token}
+        }
+        return new Promise((resolve,reject) => {
+            request.post(options, function(error, response, body){
+                if(error){
+                    console.log("Failed to syndicate post. " + error);
+                    resolve("\n");
+                } else {
+                    console.log("Post syndicated to Mastodon instance " + config.mastodon_instance);
+                    console.log("response : " + JSON.stringify(response));
+                    console.log("body : " + JSON.stringify(body));
+                    resolve("syndicated-to : " + config.mastodon_instance + "\n");
+                }
+            });
+        });
+    }
+}
+
+const getFileContent = function(doc){
+    return Promise.all([
+        getMetadata(doc),
+        getTitle(doc),
+        handleFiles(doc),
+        syndicate(doc),
+        getContent(doc)
+      ])
+        .then(result => result.filter(value => !!value).join('\n'));
+};
+
 //Micropub endpoint
 app.use('/micropub', micropub({
 
     tokenReference: config.token,
-  
+    queryHandler: (q, req) => {
+        if (q === 'config') {
+          const config = {};
+          /*if(config.media_endpoint) { config['media-endpoint'] = config.media_endpoint; }*/
+          if(config.syndicate_to) { config['syndicate-to'] = config.syndicate_to; }
+          return config;
+        } else if (q === 'syndicate-to') {
+          return config.syndicate_to ? { 'syndicate-to': config.syndicate_to } : undefined;
+        }
+    },  
     handler: function (micropubDocument, req) {
         console.log("Generated Micropub Document \n" + JSON.stringify(micropubDocument));
 
