@@ -8,6 +8,7 @@ Currently, the endpoint supports the following.
 * Metadata creation for tags, slugs and published date
 * Support for [like](https://indieweb.org/like) and [reply](https://indieweb.org/reply) post types. Added as metadata `like-of` and `in-reply-to`.
 * Uploading of image files as `multipart` data. Added as metadata `photo`
+* Support for syndicating posts to Mastodon
 
 ## TODO
 * [ ] Implement repost, bookmark post types
@@ -51,7 +52,10 @@ Variable | Description
 `MICRO_POST_PATH` | (Optional) Dropbox `path` where micro posts are to be stored. Default to `POST_PATH`
 `SET_DATE` | (Optional) A `boolean` flag which if set to `true`, date of the post creation is explicitly added to post metadata
 `TZ` | (Optional - only if `SET_DATE` set) By default, post creation date would be in `UTC`. This can be overridden by setting this to the preferred timezone using the [TZ Database Timezone format](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
-`DEFAULT_TAG` | (Optional) If this property is set and no category is provided, value would be set as the tag  
+`DEFAULT_TAG` | (Optional) If this property is set and no category is provided, value would be set as the tag
+`SYNDICATE_TO` | (Optional) Syndication target(s) provided as a JSON array. E.g. as defined at [spec](https://www.w3.org/TR/micropub/#syndication-targets): [{"uid":"https://social.example/johndoe","name":"@johndoe on Example Social Network"}]
+`MASTODON_INSTANCE` | (Optional) Mastodon instance where posts need to be syndicated
+`MASTODON_TOKEN` | (Optional) Access Token for Mastodon
 
 ## Modules used
 * [micropub-express](https://github.com/voxpelli/node-micropub-express) – an [Express](http://expressjs.com/) Micropub endpoint that accepts and verifies Micropub requests and calls a callback with a parsed `micropubDocument`.

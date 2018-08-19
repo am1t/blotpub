@@ -48,6 +48,22 @@
         "description": "Overide default timezone for dates to the preferred one",
         "required": false
       },
+      "DEFAULT_TAG": {
+        "description": "Define default tags for posts with no tags",
+        "required": false
+      },
+      "SYNDICATE_TO": {
+        "description": "Syndication target(s). Provided as a JSON array.",
+        "required": false
+      },
+      "MASTODON_INSTANCE": {
+        "description": "Mastodon instance where posts need to be syndicated",
+        "required": false
+      },
+      "MASTODON_TOKEN": {
+        "description": "Access Token for the Mastodon",
+        "required": false
+      }            
     },
     "buildpacks": [
       {
