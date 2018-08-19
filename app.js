@@ -161,11 +161,11 @@ const getContent = function (doc) {
 };
 
 const syndicate = function(doc) {
-    if(isEmpty(doc.properties.mp['syndicate-to'])){
+    if(isEmpty(doc.mp['syndicate-to'])){
         return Promise.resolve('\n');
     }
 
-    let syndicate_to = [].concat(doc.properties.mp['syndicate-to']);
+    let syndicate_to = [].concat(doc.mp['syndicate-to']);
     if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
         let MASTO_API = config.mastodon_instance + "/api/v1/statuses";
         let content = getContent(doc);
@@ -182,15 +182,17 @@ const syndicate = function(doc) {
             request.post(options, function(error, response, body){
                 if(error){
                     console.log("Failed to syndicate post. " + error);
-                    resolve("\n");
+                    return resolve("\n");
                 } else {
                     console.log("Post syndicated to Mastodon instance " + config.mastodon_instance);
                     console.log("response : " + JSON.stringify(response));
                     console.log("body : " + JSON.stringify(body));
-                    resolve("syndicated-to : " + config.mastodon_instance + "\n");
+                    return resolve("syndicated-to : " + config.mastodon_instance + "\n");
                 }
             });
         });
+    } else {
+        return Promise.resolve('\n');
     }
 }
 
