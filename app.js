@@ -183,17 +183,19 @@ const syndicate = function(doc) {
                 body : 'status=' +  content,
                 headers : {'Authorization': 'Bearer ' + config.mastodon_token}
             }
-            request.post(options, function(error, response, body){
-                if(error){
-                    console.log("Failed to syndicate post. " + error);
-                    return "\n";
-                } else {
-                    body = JSON.parse(body);
-                    console.log("Post syndicated to Mastodon instance " + body.url.toString());
-                    return "syndicated-to : " + body.url.toString() + "\n";
-                }
+            return new Promise((resolve,reject) => {
+                request.post(options, function(error, response, body){
+                    if(error){
+                        console.log("Failed to syndicate post. " + error);
+                        resolve(config.mastodon_instance);
+                    } else {
+                        body = JSON.parse(body);
+                        console.log("Post syndicated to Mastodon instance " + body.url.toString());
+                        resolve(body.url.toString());
+                    }
+                });
             });            
-        });
+        }).then(result => "syndicated-to : " + result + "\n");
     } else {
         return Promise.resolve('\n');
     }
