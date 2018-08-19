@@ -186,7 +186,7 @@ const syndicate = function(doc) {
                         console.log("Failed to syndicate post. " + error);
                         return resolve("\n");
                     } else {
-                        console.log("body : " + body)
+                        body = JSON.parse(body);
                         console.log("Post syndicated to Mastodon instance " + body.url.toString());
                         return resolve("syndicated-to : " + body.url.toString() + "\n");
                     }
