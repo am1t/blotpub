@@ -170,7 +170,7 @@ const syndicate = function(doc) {
         : doc.mp['syndicate-to']);
     if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
         let MASTO_API = config.mastodon_instance + "/api/v1/statuses";
-        let content = getContent(doc);
+        let content = getContent(doc).toString();
         content = content.replace("\'", "'");
         content = content.replace('\&quot;', '\"');
         content = encodeURIComponent(content);
