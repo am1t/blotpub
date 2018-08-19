@@ -211,12 +211,16 @@ app.use('/micropub', micropub({
     tokenReference: config.token,
     queryHandler: (q, req) => {
         if (q === 'config') {
-          const config = {};
+            const config = {};
           /*if(config.media_endpoint) { config['media-endpoint'] = config.media_endpoint; }*/
-          if(config.syndicate_to) { config['syndicate-to'] = config.syndicate_to; }
-          return config;
+            if(config.syndicate_to) { 
+                console.log("Syndication set " + JSON.stringify(config.syndicate_to));
+                config['syndicate-to'] = config.syndicate_to; 
+            }
+            console.log("config set " + JSON.stringify(config));
+            return config;
         } else if (q === 'syndicate-to') {
-          return config.syndicate_to ? { 'syndicate-to': config.syndicate_to } : undefined;
+            return config.syndicate_to ? { 'syndicate-to': config.syndicate_to } : undefined;
         }
     },  
     handler: function (micropubDocument, req) {
