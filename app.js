@@ -7,6 +7,7 @@ const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
 const config = require('./config/config');
+const removeMd = require('remove-markdown');
 
 const app = express();
 
@@ -171,6 +172,7 @@ const syndicate = function(doc) {
     if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
         getContent(doc).then(content => {
             let MASTO_API = config.mastodon_instance + "api/v1/statuses";
+            content = removeMd(content);
             content = content.replace("\'", "'");
             content = content.replace('\&quot;', '\"');
             content = encodeURIComponent(content);
