@@ -169,7 +169,7 @@ const syndicate = function(doc) {
         ? doc.properties['mp-syndicate-to'] 
         : doc.mp['syndicate-to']);
     if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
-        let MASTO_API = config.mastodon_instance + "/api/v1/statuses";
+        let MASTO_API = config.mastodon_instance + "api/v1/statuses";
         let content = getContent(doc).toString();
         content = content.replace("\'", "'");
         content = content.replace('\&quot;', '\"');
@@ -177,7 +177,7 @@ const syndicate = function(doc) {
         content = content.substr(0, 500) + "...";
         let options = {
             url : MASTO_API,
-            status : content,
+            body : {'status' :  content},
             headers : {'Authorization': 'Bearer ' + config.mastodon_token}
         }
         return new Promise((resolve,reject) => {
