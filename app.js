@@ -169,29 +169,29 @@ const syndicate = function(doc) {
         ? doc.properties['mp-syndicate-to'] 
         : doc.mp['syndicate-to']);
     if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
-        let MASTO_API = config.mastodon_instance + "api/v1/statuses";
-        let content = getContent(doc).toString();
-        content = content.replace("\'", "'");
-        content = content.replace('\&quot;', '\"');
-        content = encodeURIComponent(content);
-        content = content.substr(0, 500) + "...";
-        let options = {
-            url : MASTO_API,
-            body : 'status=' +  content,
-            headers : {'Authorization': 'Bearer ' + config.mastodon_token}
-        }
-        return new Promise((resolve,reject) => {
-            request.post(options, function(error, response, body){
-                if(error){
-                    console.log("Failed to syndicate post. " + error);
-                    return resolve("\n");
-                } else {
-                    console.log("Post syndicated to Mastodon instance " + config.mastodon_instance);
-                    console.log("response : " + JSON.stringify(response));
-                    console.log("body : " + JSON.stringify(body));
-                    return resolve("syndicated-to : " + config.mastodon_instance + "\n");
-                }
-            });
+        getContent(doc).then(content => {
+            let MASTO_API = config.mastodon_instance + "api/v1/statuses";
+            content = content.replace("\'", "'");
+            content = content.replace('\&quot;', '\"');
+            content = encodeURIComponent(content);
+            content = content.substr(0, 500) + "...";
+            let options = {
+                url : MASTO_API,
+                body : 'status=' +  content,
+                headers : {'Authorization': 'Bearer ' + config.mastodon_token}
+            }
+            return new Promise((resolve,reject) => {
+                request.post(options, function(error, response, body){
+                    if(error){
+                        console.log("Failed to syndicate post. " + error);
+                        return resolve("\n");
+                    } else {
+                        console.log("Post syndicated to Mastodon instance " + config.mastodon_instance);
+                        console.log("body : " + JSON.stringify(body));
+                        return resolve("syndicated-to : " + JSON.stringify(body.url) + "\n");
+                    }
+                });
+            });            
         });
     } else {
         return Promise.resolve('\n');
