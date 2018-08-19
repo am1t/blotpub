@@ -6,8 +6,9 @@ require('isomorphic-fetch');
 const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
-const config = require('./config/config');
 const removeMd = require('remove-markdown');
+
+const config = require('./config/config');
 
 const app = express();
 
@@ -186,11 +187,11 @@ const syndicate = function(doc) {
                 request.post(options, function(error, response, body){
                     if(error){
                         console.log("Failed to syndicate post. " + error);
-                        return resolve("\n");
+                        resolve("\n");
                     } else {
                         body = JSON.parse(body);
                         console.log("Post syndicated to Mastodon instance " + body.url.toString());
-                        return resolve("syndicated-to : " + body.url.toString() + "\n");
+                        resolve("syndicated-to : " + body.url.toString() + "\n");
                     }
                 });
             });            
