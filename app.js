@@ -161,11 +161,11 @@ const getContent = function (doc) {
 };
 
 const syndicate = function(doc) {
-    if(isEmpty(doc.mp['syndicate-to'])){
+    if(isEmpty(doc.properties.mp['syndicate-to'])){
         return Promise.resolve('\n');
     }
 
-    let syndicate_to = [].concat(doc.mp['syndicate-to']);
+    let syndicate_to = [].concat(doc.properties.mp['syndicate-to']);
     if(syndicate_to.indexOf(config.mastodon_instance) !== -1){
         let MASTO_API = config.mastodon_instance + "/api/v1/statuses";
         let content = getContent(doc);
