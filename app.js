@@ -174,7 +174,7 @@ const syndicate = function(doc) {
             content = content.replace("\'", "'");
             content = content.replace('\&quot;', '\"');
             content = encodeURIComponent(content);
-            content = content.substr(0, 500) + "...";
+            content = content.substr(0, 512);
             let options = {
                 url : MASTO_API,
                 body : 'status=' +  content,
@@ -186,9 +186,9 @@ const syndicate = function(doc) {
                         console.log("Failed to syndicate post. " + error);
                         return resolve("\n");
                     } else {
-                        console.log("Post syndicated to Mastodon instance " + config.mastodon_instance);
-                        console.log("body : " + JSON.stringify(body));
-                        return resolve("syndicated-to : " + JSON.stringify(body.url) + "\n");
+                        console.log("body : " + body)
+                        console.log("Post syndicated to Mastodon instance " + body.url.toString());
+                        return resolve("syndicated-to : " + body.url.toString() + "\n");
                     }
                 });
             });            
