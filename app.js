@@ -115,7 +115,7 @@ const getTitle = function(doc) {
 }
 
 const handleFiles = function(doc) {
-    if(isEmpty(doc.files) || isEmpty(doc.files.photo) || isEmpty(doc.files.file)){
+    if(isEmpty(doc.files) || (isEmpty(doc.files.photo) && isEmpty(doc.files.file))){
         return Promise.resolve('');
     }
     let files = !isEmpty(doc.files.photo) ? doc.files.photo : doc.files.file;
