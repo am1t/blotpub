@@ -7,7 +7,6 @@ const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
 const removeMd = require('remove-markdown');
-const multer = require('multer');
 
 const config = require('./config/config');
 
@@ -264,10 +263,7 @@ app.get('/media', (req, res, next) => {
     return res.sendStatus(202);
 });
 
-const file_storage = multer.memoryStorage();
-let file_upload = multer({ storage: file_storage });
-
-router.post('/media', file_upload.single('file'), (req, res, next) => {
+router.post('/media', (req, res, next) => {
     const data = req.body;
     console.log("Received request for media handling");
     console.log(JSON.stringify(data));
