@@ -63,7 +63,11 @@
       "MASTODON_TOKEN": {
         "description": "Access Token for the Mastodon",
         "required": false
-      }            
+      },
+      "MEDIA_ENDPOINT": {
+        "description": "Media Endpoint to be used",
+        "required": false
+      }
     },
     "buildpacks": [
       {

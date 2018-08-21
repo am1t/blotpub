@@ -9,10 +9,11 @@ Currently, the endpoint supports the following.
 * Support for [like](https://indieweb.org/like) and [reply](https://indieweb.org/reply) post types. Added as metadata `like-of` and `in-reply-to`.
 * Uploading of image files as `multipart` data. Added as metadata `photo`
 * Support for syndicating posts to Mastodon
+* In-built media endpoint available at `/micropub/media`
 
 ## TODO
+* [x] Add support for media endpoint
 * [ ] Implement repost, bookmark post types
-* [ ] Add support for media endpoint
 * [ ] Add support for updating and deleting the posts
 
 ## Requirements
@@ -56,6 +57,7 @@ Variable | Description
 `SYNDICATE_TO` | (Optional) Syndication target(s) provided as a JSON array. E.g. as defined at [spec](https://www.w3.org/TR/micropub/#syndication-targets): [{"uid":"https://social.example/johndoe","name":"@johndoe on Example Social Network"}]
 `MASTODON_INSTANCE` | (Optional) Mastodon instance where posts need to be syndicated
 `MASTODON_TOKEN` | (Optional) Access Token for Mastodon
+`MEDIA_ENDPOINT` | (Optional) Media Endpoint to be used. Can also be configured to in-built endpoint available at `/micropub/media`
 
 ## Modules used
 * [micropub-express](https://github.com/voxpelli/node-micropub-express) – an [Express](http://expressjs.com/) Micropub endpoint that accepts and verifies Micropub requests and calls a callback with a parsed `micropubDocument`.
@@ -63,6 +65,8 @@ Variable | Description
 ## Releases
 Version | Date | Notes
 -------:|:----:|:-----
+0.5 | 2018-08-21 | Introduced an in-built Media endpoint
+0.4 | 2018-08-19 | Added support for syndicating posts to Mastodon
 0.3 | 2018-08-15 | Added support for photo uploads multipart
 0.2 | 2018-08-08 | Added support for like/reply post types
 0.1 | 2018-08-05 | Initial release with support for notes and articles 
