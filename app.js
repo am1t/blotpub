@@ -122,8 +122,13 @@ const handleFiles = function(doc) {
     let files = isEmpty(doc.files.photo) ? doc.files.file : doc.files.photo;
     return Promise.all(
         (files || []).map(file => {
-            let photoName = config.photo_path + file.filename;
-            let photoURL = config.site_url + "/" + config.photo_uri + "/" +  file.filename;
+            let photoFileName = file.filename;
+            if(photoFileName.indexOf("image.") !== -1){
+                photoFileName = "img_" + Date.now()
+                    + photoFileName.substr(photoFileName.lastIndexOf("."), photoFileName.length);
+            }
+            let photoName = config.photo_path + photoFileName;
+            let photoURL = config.site_url + "/" + config.photo_uri + "/" +  photoFileName;
             return new Promise((resolve,reject) => {
                 dbx.filesUpload({ path: photoName, contents: file.buffer })
                 .then(response => {
@@ -263,8 +268,8 @@ app.use('/micropub', micropub({
                     return {};
                 }
                 console.log("Media handled with response " + res);
-                let resurl = res.split(':')[1];
-                return resurl ? { url: resurl } : {};
+                let resurl = res.split(/:(.+)/)[1];
+                return resurl ? { url: resurl.trim() } : {};
             });
         });
     }
