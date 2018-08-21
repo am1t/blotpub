@@ -115,10 +115,10 @@ const getTitle = function(doc) {
 }
 
 const handleFiles = function(doc) {
-    if(isEmpty(doc.files) || isEmpty(doc.files.photo)){
+    if(isEmpty(doc.files) || isEmpty(doc.files.photo) || isEmpty(doc.files.file)){
         return Promise.resolve('');
     }
-    let files = doc.files.photo;
+    let files = !isEmpty(doc.files.photo) ? doc.files.photo : doc.files.file;
     return Promise.all(
         (files || []).map(file => {
             let photoName = config.photo_path + file.filename;
@@ -254,8 +254,11 @@ app.use('/micropub', micropub({
         });
     },  
     media_handler: function (data, req) {
-        console.log("Received request for media handling " + JSON.stringify(data));
-        return Promise.resolve({ url: req.protocol + '://' + req.get('host') + req.originalUrl });
+        console.log("Received request for media handling");
+        return Promise.resolve(handleFiles(data)).then(res => { 
+            let resurl = res.split(':')[1].trim();
+            return { url: resurl }
+        });
     }
   
   }));
