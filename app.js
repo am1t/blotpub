@@ -115,13 +115,9 @@ const getTitle = function(doc) {
 }
 
 const handleFiles = function(doc) {
-    if(isEmpty(doc.files) || isEmpty(doc.files.photo)){
-        if(isEmpty(doc.files) || isEmpty(doc.files.file)){
-            console.log("No files found to be uploaded");
-            console.log(isEmpty(doc.files) + "\t" + isEmpty(doc.files.photo) 
-                + "\t" + isEmpty(doc.files.file));
-            return Promise.resolve('');
-        }
+    if(isEmpty(doc.files) || (isEmpty(doc.files.photo) && isEmpty(doc.files.file))){
+        console.log("No files found to be uploaded");
+        return Promise.resolve('');
     }
     let files = isEmpty(doc.files.photo) ? doc.files.file : doc.files.photo;
     return Promise.all(
