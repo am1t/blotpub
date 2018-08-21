@@ -213,7 +213,7 @@ const getFileContent = function(doc){
 };
 
 //Micropub endpoint
-let router = app.use('/micropub', micropub({
+app.use('/micropub', micropub({
 
     tokenReference: config.token,
     queryHandler: (q, req) => {
@@ -256,7 +256,7 @@ let router = app.use('/micropub', micropub({
   
   }));
 
-router.get('/media', (req, res, next) => {
+app.get('/media', (req, res, next) => {
     const data = req.body;
     console.log("Received request for media handling");
     console.log(JSON.stringify(data));
