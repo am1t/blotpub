@@ -254,7 +254,7 @@ app.use('/micropub', micropub({
         });
     },  
     media_handler: function (data, req) {
-        console.log("Received request for media handling" + JSON.stringify(data));
+        console.log("Received request for media handling " + JSON.stringify(data));
         return Promise.resolve({ url: req.protocol + '://' + req.get('host') + req.originalUrl });
     }
   
