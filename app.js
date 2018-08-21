@@ -257,11 +257,12 @@ app.use('/micropub', micropub({
         console.log("Received request for media handling");
         return Promise.resolve().then(() => {
             return handleFiles(data).then(res => { 
-            if(!res){
-                console.log("Failed to upload file.");
-            }
-            let resurl = res.split(':')[1].trim();
-            return { url: resurl }
+                if(!res){
+                    console.log("Failed to upload file.");
+                }
+                let resurl = res.split(':')[1].trim();
+                return { url: resurl }
+            });
         });
     }
   
