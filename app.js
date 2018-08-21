@@ -116,9 +116,10 @@ const getTitle = function(doc) {
 
 const handleFiles = function(doc) {
     if(isEmpty(doc.files) || (isEmpty(doc.files.photo) && isEmpty(doc.files.file))){
+        console.log("No files found to be uploaded");
         return Promise.resolve('');
     }
-    let files = !isEmpty(doc.files.photo) ? doc.files.photo : doc.files.file;
+    let files = isEmpty(doc.files.photo) ? doc.files.file : doc.files.photo;
     return Promise.all(
         (files || []).map(file => {
             let photoName = config.photo_path + file.filename;
@@ -258,10 +259,12 @@ app.use('/micropub', micropub({
         return Promise.resolve().then(() => {
             return handleFiles(data).then(res => { 
                 if(!res){
-                    console.log("Failed to upload file.");
+                    console.log("Failed to upload the media.");
+                    return {};
                 }
-                let resurl = res.split(':')[1].trim();
-                return { url: resurl }
+                console.log("Media handled with response " + res);
+                let resurl = res.split(':')[1];
+                return resurl ? { url: resurl } : {};
             });
         });
     }
