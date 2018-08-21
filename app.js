@@ -255,7 +255,11 @@ app.use('/micropub', micropub({
     },  
     media_handler: function (data, req) {
         console.log("Received request for media handling");
-        return Promise.resolve(handleFiles(data)).then(res => { 
+        return Promise.resolve().then(() => {
+            return handleFiles(data).then(res => { 
+            if(!res){
+                console.log("Failed to upload file.");
+            }
             let resurl = res.split(':')[1].trim();
             return { url: resurl }
         });
