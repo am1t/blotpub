@@ -176,8 +176,8 @@ const syndicate = function(doc) {
             content = removeMd(content);
             content = content.replace("\'", "'");
             content = content.replace('\&quot;', '\"');
-            content = encodeURIComponent(content);
             content = content.substr(0, 512);
+            content = encodeURIComponent(content);
             let options = {
                 url : MASTO_API,
                 body : 'status=' +  content,
@@ -213,7 +213,7 @@ const getFileContent = function(doc){
 };
 
 //Micropub endpoint
-app.use('/micropub', micropub({
+let router = app.use('/micropub', micropub({
 
     tokenReference: config.token,
     queryHandler: (q, req) => {
@@ -256,6 +256,11 @@ app.use('/micropub', micropub({
   
   }));
 
+router.get('/media', (req, res, next) => {
+    const data = req.body;
+    console.log(JSON.stringify(data));
+    return res.sendStatus(202);
+});
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Server Started on port ${port}`);
