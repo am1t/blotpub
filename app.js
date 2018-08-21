@@ -213,7 +213,7 @@ const getFileContent = function(doc){
 };
 
 //Micropub endpoint
-app.use('/micropub', micropub({
+let router = app.use('/micropub', micropub({
 
     tokenReference: config.token,
     queryHandler: (q, req) => {
@@ -262,6 +262,14 @@ app.get('/media', (req, res, next) => {
     console.log(JSON.stringify(data));
     return res.sendStatus(202);
 });
+
+router.post('/media', (req, res, next) => {
+    const data = req.body;
+    console.log("Received request for media handling");
+    console.log(JSON.stringify(data));
+    return res.redirect(201, req.protocol + '://' + req.get('host') + req.originalUrl);
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Server Started on port ${port}`);
