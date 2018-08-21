@@ -219,7 +219,7 @@ let router = app.use('/micropub', micropub({
     queryHandler: (q, req) => {
         if (q === 'config') {
             const config_res = {};
-          /*if(config.media_endpoint) { config['media-endpoint'] = config.media_endpoint; }*/
+          if(config.media_endpoint) { config['media-endpoint'] = config.media_endpoint; }
             if(!isEmpty(config.syndicate_to)) { 
                 config_res['syndicate-to'] = config.syndicate_to; 
             }
@@ -258,6 +258,7 @@ let router = app.use('/micropub', micropub({
 
 router.get('/media', (req, res, next) => {
     const data = req.body;
+    console.log("Received request for media handling");
     console.log(JSON.stringify(data));
     return res.sendStatus(202);
 });
