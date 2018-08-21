@@ -219,7 +219,7 @@ let router = app.use('/micropub', micropub({
     queryHandler: (q, req) => {
         if (q === 'config') {
             const config_res = {};
-          if(config.media_endpoint) { config['media-endpoint'] = config.media_endpoint; }
+          if(config.media_endpoint) { config_res['media-endpoint'] = config.media_endpoint; }
             if(!isEmpty(config.syndicate_to)) { 
                 config_res['syndicate-to'] = config.syndicate_to; 
             }
