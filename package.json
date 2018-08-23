@@ -5,14 +5,21 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "installed-check -e && eslint ."
   },
   "keywords": [
     "micropub",
     "indieweb"
   ],
   "author": "Amit Gawande <amit.w.gawande@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/am1t/blotpub"
+  },
   "license": "MIT",
+  "engines": {
+    "node": "^6.14.0 || ^8.10.0 || >=9.10.0"
+  },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "dropbox": "^4.0.9",
@@ -22,5 +29,16 @@
     "micropub-express": "git://github.com/am1t/node-micropub-express.git",
     "remove-markdown": "^0.3.0",
     "request": "^2.87.0"
+  },
+  "devDependencies": {
+    "ajv": "^6.5.3",
+    "eslint": "^5.4.0",
+    "eslint-config-semistandard": "^12.0.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "installed-check": "^2.2.0"
   }
 }

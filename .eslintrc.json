@@ -1,0 +1,12 @@
+{
+    "extends": "semistandard",
+    "root": true,
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules": {
+        "no-var": 2,
+        "indent": 0,
+        "camelcase": 0
+    }
+}
