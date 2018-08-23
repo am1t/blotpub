@@ -1,4 +1,4 @@
-# Micropub for [Blot](https://blot.im), with Dropbox
+# Micropub for [Blot](https://blot.im), with Dropbox [![Build Status](https://travis-ci.org/am1t/blotpub.svg?branch=master)](https://travis-ci.org/am1t/blotpub)
 
 An endpoint that accepts [Micropub](http://micropub.net/) requests, creates a simple Blot posts and saves them to a configured Dropbox folder. This enables updating a Blot blog through a [Micropub client](https://indieweb.org/Micropub/Clients).
 
