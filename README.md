@@ -1,4 +1,5 @@
 # Micropub for [Blot](https://blot.im), with Dropbox [![Build Status](https://travis-ci.org/am1t/blotpub.svg?branch=master)](https://travis-ci.org/am1t/blotpub)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fam1t%2Fblotpub.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fam1t%2Fblotpub?ref=badge_shield)
 
 An endpoint that accepts [Micropub](http://micropub.net/) requests, creates a simple Blot posts and saves them to a configured Dropbox folder. This enables updating a Blot blog through a [Micropub client](https://indieweb.org/Micropub/Clients).
 
@@ -70,3 +71,7 @@ Version | Date | Notes
 0.3 | 2018-08-15 | Added support for photo uploads multipart
 0.2 | 2018-08-08 | Added support for like/reply post types
 0.1 | 2018-08-05 | Initial release with support for notes and articles 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fam1t%2Fblotpub.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fam1t%2Fblotpub?ref=badge_large)
