@@ -12,6 +12,8 @@ Currently, the endpoint supports the following.
 * Support for syndicating posts to Mastodon
 * In-built media endpoint available at `/micropub/media`
 
+[Full implementation report](https://micropub.rocks/implementation-reports/servers/265/WkpcEN4FhqpE4HN6La7E) is available on [micropub.rocks](https://micropub.rocks/)
+
 ## TODO
 * [x] Add support for media endpoint
 * [ ] Implement repost, bookmark post types
