@@ -12,7 +12,7 @@ Currently, the endpoint supports the following.
 * Support for syndicating posts to Mastodon
 * In-built media endpoint available at `/micropub/media`
 
-[Full implementation report](https://micropub.rocks/implementation-reports/servers/265/WkpcEN4FhqpE4HN6La7E) is available on [micropub.rocks](https://micropub.rocks/)
+A step-by-step setup guide is available at [the introduction blog post](https://blog.amitgawande.com/micropub-endpoint-for-blot). [Full implementation report](https://micropub.rocks/implementation-reports/servers/265/WkpcEN4FhqpE4HN6La7E) is available on [micropub.rocks](https://micropub.rocks/)
 
 ## TODO
 * [x] Add support for media endpoint
@@ -32,12 +32,12 @@ You can also deploy directly to Heroku.
 **Note**: This is an alpha release and there may be some edge cases that aren't handled. If you find one, please [report an issue](https://github.com/am1t/blotpub/issues/new).
 
 ## Endpoint discovery
-Once you have deployed the application, your Micropub endpoint can be found at `/micropub` e.g. `https://example.com/micropub`.
+Once you have deployed the application, your Micropub endpoint can be found at `/micropub` e.g. `https://deployed-blotpub-app.com/micropub`. Note that the endpoint url is different from your website url. It would be the url for the blotpub application that your installed in the 1st step. For Heroku deployment, it would be something like `https://*****. herokuapp.com/micropub` (exact url will be available at Heroku dashboard).
 
 To enable automatic discovery for your [Micropub endpoint](https://indieweb.org/micropub#Endpoint_Discovery) and [token endpoint](https://indieweb.org/obtaining-an-access-token#Discovery), you will need to add the following values to your Blot site's `<head>` - regularly in the `head.html` file in your theme.
 
 ```
-<link rel="micropub" href="https://example.com/micropub">
+<link rel="micropub" href="https://deployed-blotpub-app.com/micropub">
 <link rel="token_endpoint" href="https://tokens.indieauth.com/token">
 ```
 
@@ -49,7 +49,7 @@ Variable | Description
 -------- | -----------
 `AUTH_TOKEN_ENDPOINT` | URL to verify Micropub token. Example: `https://tokens.indieauth.com/token`
 `SITE_URL` | URL for your site. Example: `https://johndoe.example`
-`DROPBOX_TOKEN` | [Dropbox access token](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/) to grant access to your Dropbox folder. Example: `12345abcde67890fghij09876klmno54321pqrst`
+`DROPBOX_TOKEN` | [Dropbox access token](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/) to grant access to your Dropbox folder. "Permission type" in Dropbox should be "Full Dropbox". Example: `12345abcde67890fghij09876klmno54321pqrst`
 `POST_PATH` | Dropbox `path` where posts are to be stored
 `PHOTO_PATH` | (Optional) Dropbox path where images are to be stored. Default to POST_PATH
 `PHOTO_RELATIVE_URI` | (Optional) Relative public URI to uploaded images (ignoring Site URL). Default to blank
