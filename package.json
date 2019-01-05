@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "installed-check -e && eslint ."
+    "test": "installed-check -e && eslint .",
+    "prepush": "npm test"
   },
   "keywords": [
     "micropub",

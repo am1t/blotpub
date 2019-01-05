@@ -198,7 +198,7 @@ const syndicate = function (doc) {
                     } else {
                         body = JSON.parse(body);
                         console.log('Post syndicated to Mastodon instance ' + body.url.toString());
-                        resolve('syndicated-to : ' + body.url.toString() + '\n');
+                        resolve('mastodon-link : ' + body.url.toString() + '\n');
                     }
                 });
             });
