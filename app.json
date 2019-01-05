@@ -41,7 +41,8 @@
       },
       "PHOTO_RELATIVE_URI": {
         "description": "Relative public URI to uploaded images (ignoring Site URL). Default to blank",
-        "required": false
+        "required": false,
+        "value": "img"
       },      
       "SET_DATE": {
         "description": "Flag to enable post creation date to be set explicitly in metadata",
