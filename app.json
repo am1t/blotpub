@@ -26,15 +26,18 @@
       },
       "POST_PATH": {
         "description": "Dropbox path where posts are to be stored",
-        "required": true
+        "required": false,
+        "value": "/Apps/Blot/"
       },
       "MICRO_POST_PATH": {
-        "description": "Dropbox path where micro posts are to be stored. Default to POST_PATH",
-        "required": false
+        "description": "Dropbox path where micro posts are to be stored",
+        "required": false,
+        "value": "/Apps/Blot/"
       },      
       "PHOTO_PATH": {
-        "description": "Dropbox path where images are to be stored. Default to POST_PATH",
-        "required": false
+        "description": "Dropbox path where images are to be stored",
+        "required": false,
+        "value": "/Apps/Blot/img/"
       },
       "PHOTO_RELATIVE_URI": {
         "description": "Relative public URI to uploaded images (ignoring Site URL). Default to blank",

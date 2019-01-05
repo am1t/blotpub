@@ -22,7 +22,7 @@ const config = {
     default_tag: env['DEFAULT_TAG'],
     post_path: validatePath(env['POST_PATH'] = env['POST_PATH'] !== undefined ? env['POST_PATH'] : default_path),
     micro_post_path: validatePath(env['MICRO_POST_PATH'] !== undefined ? env['MICRO_POST_PATH'] : default_path),
-    photo_path: validatePath(env['PHOTO_PATH'] !== undefined ? env['PHOTO_PATH'] : default_path),
+    photo_path: validatePath(env['PHOTO_PATH'] !== undefined ? env['PHOTO_PATH'] : default_path + 'img/'),
     photo_uri: env['PHOTO_RELATIVE_URI'] !== undefined ? env['PHOTO_RELATIVE_URI'] : '',
     site_url: env['SITE_URL'],
     set_date: JSON.parse(env['SET_DATE'] ? env['SET_DATE'] : false),

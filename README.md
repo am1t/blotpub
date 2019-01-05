@@ -51,7 +51,7 @@ Variable | Description
 `SITE_URL` | URL for your site. Example: `https://johndoe.example`
 `DROPBOX_TOKEN` | [Dropbox access token](https://blogs.dropbox.com/developers/2014/05/generate-an-access-token-for-your-own-account/) to grant access to your Dropbox folder. "Permission type" in Dropbox should be "Full Dropbox". Example: `12345abcde67890fghij09876klmno54321pqrst`
 `POST_PATH` | (Optional) Dropbox `path` where posts are to be stored. Defaults to `/Apps/Blot/`
-`PHOTO_PATH` | (Optional) Dropbox path where images are to be stored. Defaults to `/Apps/Blot/`
+`PHOTO_PATH` | (Optional) Dropbox path where images are to be stored. Defaults to `/Apps/Blot/img/`
 `PHOTO_RELATIVE_URI` | (Optional) Relative public URI to uploaded images (ignoring Site URL). Default to blank
 `MICRO_POST_PATH` | (Optional) Dropbox `path` where micro posts are to be stored. Defaults to `/Apps/Blot/`
 `SET_DATE` | (Optional) A `boolean` flag which if set to `true`, date of the post creation is explicitly added to post metadata
