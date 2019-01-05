@@ -2,14 +2,14 @@
 
 const env = process.env;
 
-let default_path = "/Apps/Blot/";
+let default_path = '/Apps/Blot/';
 
 const validatePath = function (path) {
-  path = path.startsWith("/") ? path : "/" + path;
-  path += path.endsWith("/") ? "" : "/";
-  
+  path = path.startsWith('/') ? path : '/' + path;
+  path += path.endsWith('/') ? '' : '/';
+
   return path;
-}
+};
 
 const config = {
     token: env['AUTH_TOKEN_ENDPOINT']
