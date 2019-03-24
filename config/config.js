@@ -29,6 +29,11 @@ const config = {
     syndicate_to: env['SYNDICATE_TO'] !== undefined ? [].concat(JSON.parse(env['SYNDICATE_TO'])) : [],
     mastodon_instance: env['MASTODON_INSTANCE'],
     mastodon_token: env['MASTODON_TOKEN'],
+    twitter_instance: env['TWITTER_INSTANCE'],
+    twitter_api_key: env['TWITTER_API_KEY'],
+    twitter_api_secret: env['TWITTER_API_SECRET'],
+    twitter_access: env['TWITTER_ACCESS_TOKEN'],
+    twitter_access_secret: env['TWITTER_ACCESS_TOKEN_SECRET'],
     media_endpoint: env['MEDIA_ENDPOINT']
 };
 

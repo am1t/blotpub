@@ -9,7 +9,7 @@ const Dropbox = require('dropbox').Dropbox;
 const kebabCase = require('lodash.kebabcase');
 const cheerio = require('cheerio');
 const removeMd = require('remove-markdown');
-
+const Twitter = require('twitter');
 const config = require('./config/config');
 
 const app = express();
@@ -171,7 +171,7 @@ const getContent = function (doc) {
       }
 };
 
-const syndicate = function (doc) {
+const syndicate_mast = function (doc) {
     if (isEmpty(doc.properties['mp-syndicate-to'])) {
         return Promise.resolve('\n');
     }
@@ -193,7 +193,7 @@ const syndicate = function (doc) {
             return new Promise((resolve, reject) => {
                 request.post(options, function (error, response, body) {
                     if (error) {
-                        console.log('Failed to syndicate post. ' + error);
+                        console.log('Failed to syndicate post to mastodon. ' + error);
                         resolve('\n');
                     } else {
                         body = JSON.parse(body);
@@ -208,12 +208,52 @@ const syndicate = function (doc) {
     }
 };
 
+const syndicate_twit = function (doc) {
+    if (isEmpty(doc.properties['mp-syndicate-to'])) {
+        return Promise.resolve('\n');
+    }
+
+    let syndicate_to = [].concat(!isEmpty(doc.properties['mp-syndicate-to'])
+        ? doc.properties['mp-syndicate-to']
+        : doc.mp['syndicate-to']);
+    if (syndicate_to.indexOf(config.twitter_instance) !== -1) {
+        return getContent(doc).then(content => {
+            content = removeMd(content);
+            content = content.substr(0, 512);
+            content = encodeURIComponent(content);
+            let client = new Twitter({
+                consumer_key: config.twitter_api_key,
+                consumer_secret: config.twitter_api_secret,
+                access_token_key: config.twitter_access,
+                access_token_secret: config.twitter_access_secret
+              });
+            return new Promise((resolve, reject) => {
+                client.post('statuses/update', {status: content}, function(error, tweet, response) {
+                    if(error) {
+                        console.log('Failed to syndicate post to twitter. ' + error);
+                        resolve('\n');
+                    } else {
+                        console.log('Tweet - ' + tweet);
+                        console.log('Response - ' + response);
+                        let tweet_url = config.twitter_instance + 'status/' + tweet.id_str;
+                        console.log('Post syndicated to Twitter instance ' + tweet_url);
+                        resolve('twitter-link : ' + tweet_url + '\n');    
+                    }
+                  });
+            });
+        });
+    } else {
+        return Promise.resolve('\n');
+    }
+};
+
 const getFileContent = function (doc) {
     return Promise.all([
         getMetadata(doc),
         getTitle(doc),
         handleFiles(doc),
-        syndicate(doc),
+        syndicate_mast(doc),
+        syndicate_twit(doc),
         getContent(doc)
       ])
         .then(result => result.filter(value => !!value).join('\n'));
