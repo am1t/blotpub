@@ -172,7 +172,7 @@ const getContent = function (doc) {
 };
 
 const syndicate_mast = function (doc) {
-    if (isEmpty(doc.properties['mp-syndicate-to'])) {
+    if (isEmpty(doc.properties['mp-syndicate-to']) && isEmpty(doc.mp['syndicate-to'])) {
         return Promise.resolve('');
     }
 
@@ -209,7 +209,7 @@ const syndicate_mast = function (doc) {
 };
 
 const syndicate_twit = function (doc) {
-    if (isEmpty(doc.properties['mp-syndicate-to'])) {
+    if (isEmpty(doc.properties['mp-syndicate-to']) && isEmpty(doc.mp['syndicate-to'])) {
         return Promise.resolve('\n');
     }
 

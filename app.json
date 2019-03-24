@@ -71,7 +71,27 @@
       "MEDIA_ENDPOINT": {
         "description": "Media Endpoint to be used",
         "required": false
-      }
+      },
+      "TWITTER_INSTANCE": {
+        "description": "Twitter url with user id",
+        "required": false
+      },
+      "TWITTER_API_KEY": {
+        "description": "Twitter Developer's Consumer API Key",
+        "required": false
+      },
+      "TWITTER_API_SECRET": {
+        "description": "Twitter Developer's Consumer API Secret",
+        "required": false
+      },
+      "TWITTER_ACCESS_TOKEN": {
+        "description": "Twitter Developer's Access Token",
+        "required": false
+      },
+      "TWITTER_ACCESS_TOKEN_SECRET": {
+        "description": "Twitter Developer's Access Token Secret",
+        "required": false
+      }                      
     },
     "buildpacks": [
       {

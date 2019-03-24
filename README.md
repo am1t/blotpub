@@ -10,6 +10,7 @@ Currently, the endpoint supports the following.
 * Support for [like](https://indieweb.org/like) and [reply](https://indieweb.org/reply) post types. Added as metadata `like-of` and `in-reply-to`
 * Uploading of image files as `multipart` data. Added as metadata `photo`
 * Support for syndicating posts to Mastodon. Added as metadata `mastodon-link`
+* Support for syndicating posts to Twitter. Added as metadata `twitter-link`
 * In-built media endpoint available at `/micropub/media`
 
 A step-by-step setup guide is available at [the introduction blog post](https://blog.amitgawande.com/micropub-endpoint-for-blot). [Full implementation report](https://micropub.rocks/implementation-reports/servers/265/WkpcEN4FhqpE4HN6La7E) is available on [micropub.rocks](https://micropub.rocks/)
@@ -57,10 +58,15 @@ Variable | Description
 `SET_DATE` | (Optional) A `boolean` flag which if set to `true`, date of the post creation is explicitly added to post metadata
 `TZ` | (Optional - only if `SET_DATE` set) By default, post creation date would be in `UTC`. This can be overridden by setting this to the preferred timezone using the [TZ Database Timezone format](http://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 `DEFAULT_TAG` | (Optional) If this property is set and no category is provided, value would be set as the tag
-`SYNDICATE_TO` | (Optional) Syndication target(s) provided as a JSON array. E.g. as defined at [spec](https://www.w3.org/TR/micropub/#syndication-targets): [{"uid":"https://social.example/johndoe","name":"@johndoe on Example Social Network"}]
+`SYNDICATE_TO` | (Optional) Syndication target(s) provided as a JSON array. E.g. as defined at [spec](https://www.w3.org/TR/micropub/#syndication-targets): [{"uid":"https://social.example/johndoe/","name":"@johndoe on Example Social Network"}]
 `MASTODON_INSTANCE` | (Optional) Mastodon instance where posts need to be syndicated
 `MASTODON_TOKEN` | (Optional) Access Token for Mastodon
 `MEDIA_ENDPOINT` | (Optional) Media Endpoint to be used. Can also be configured to in-built endpoint available at `/micropub/media`
+`TWITTER_INSTANCE` | (Optional) Twitter url with user id (e.g. https://twitter.com/johndoe/)
+`TWITTER_API_KEY` | (Optional) Twitter Developer's Consumer API Key
+`TWITTER_API_SECRET` | (Optional) Twitter Developer's Consumer API Secret
+`TWITTER_ACCESS_TOKEN` | (Optional) Twitter Developer's Access Token
+`TWITTER_ACCESS_TOKEN_SECRET` | (Optional) Twitter Developer's Access Token Secret
 
 ## Modules used
 * [micropub-express](https://github.com/voxpelli/node-micropub-express) – an [Express](http://expressjs.com/) Micropub endpoint that accepts and verifies Micropub requests and calls a callback with a parsed `micropubDocument`.
@@ -68,6 +74,7 @@ Variable | Description
 ## Releases
 Version | Date | Notes
 -------:|:----:|:-----
+0.6 | 2019-03-24 | Added support for syndicating posts to Twitter
 0.5.1 | 2019-01-05 | Fixes for Issue [#3](https://github.com/am1t/blotpub/issues/3) + few minor changes
 0.5 | 2018-08-21 | Introduced an in-built Media endpoint
 0.4 | 2018-08-19 | Added support for syndicating posts to Mastodon
