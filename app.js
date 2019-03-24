@@ -173,7 +173,7 @@ const getContent = function (doc) {
 
 const syndicate_mast = function (doc) {
     if (isEmpty(doc.properties['mp-syndicate-to'])) {
-        return Promise.resolve('\n');
+        return Promise.resolve('');
     }
 
     let syndicate_to = [].concat(!isEmpty(doc.properties['mp-syndicate-to'])
@@ -194,17 +194,17 @@ const syndicate_mast = function (doc) {
                 request.post(options, function (error, response, body) {
                     if (error) {
                         console.log('Failed to syndicate post to mastodon. ' + error);
-                        resolve('\n');
+                        resolve('');
                     } else {
                         body = JSON.parse(body);
                         console.log('Post syndicated to Mastodon instance ' + body.url.toString());
-                        resolve('mastodon-link : ' + body.url.toString() + '\n');
+                        resolve('mastodon-link : ' + body.url.toString());
                     }
                 });
             });
         });
     } else {
-        return Promise.resolve('\n');
+        return Promise.resolve('');
     }
 };
 
@@ -219,8 +219,7 @@ const syndicate_twit = function (doc) {
     if (syndicate_to.indexOf(config.twitter_instance) !== -1) {
         return getContent(doc).then(content => {
             content = removeMd(content);
-            content = content.substr(0, 512);
-            content = encodeURIComponent(content);
+            content = content.substr(0, 280);
             let client = new Twitter({
                 consumer_key: config.twitter_api_key,
                 consumer_secret: config.twitter_api_secret,
@@ -233,8 +232,6 @@ const syndicate_twit = function (doc) {
                         console.log('Failed to syndicate post to twitter. ' + error);
                         resolve('\n');
                     } else {
-                        console.log('Tweet - ' + tweet);
-                        console.log('Response - ' + response);
                         let tweet_url = config.twitter_instance + 'status/' + tweet.id_str;
                         console.log('Post syndicated to Twitter instance ' + tweet_url);
                         resolve('twitter-link : ' + tweet_url + '\n');    
