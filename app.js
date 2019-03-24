@@ -227,14 +227,14 @@ const syndicate_twit = function (doc) {
                 access_token_secret: config.twitter_access_secret
               });
             return new Promise((resolve, reject) => {
-                client.post('statuses/update', {status: content}, function(error, tweet, response) {
-                    if(error) {
+                client.post('statuses/update', {status: content}, function (error, tweet, response) {
+                    if (error) {
                         console.log('Failed to syndicate post to twitter. ' + error);
                         resolve('\n');
                     } else {
                         let tweet_url = config.twitter_instance + 'status/' + tweet.id_str;
                         console.log('Post syndicated to Twitter instance ' + tweet_url);
-                        resolve('twitter-link : ' + tweet_url + '\n');    
+                        resolve('twitter-link : ' + tweet_url + '\n');
                     }
                   });
             });
