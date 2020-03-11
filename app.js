@@ -27,20 +27,6 @@ const isEmpty = function (value) {
 
 const getFileName = function (doc) {
     if (doc.mp && typeof doc.mp.slug !== 'undefined' && doc.mp.slug) {
-        return Promise.resolve('' + doc.mp.slug);
-    } else if (typeof doc.properties['mp-slug'] !== 'undefined' && doc.properties['mp-slug']) {
-        return Promise.resolve('' + doc.properties['mp-slug']);
-    } else {
-        if (typeof doc.properties.name !== 'undefined' && doc.properties.name && doc.properties.name[0] !== '') {
-            return Promise.resolve(kebabCase(doc.properties.name[0].trim()));
-        } else {
-            return Promise.resolve('' + Date.now());
-        }
-    }
-};
-
-const getFileNameTest = function (doc) {
-    if (doc.mp && typeof doc.mp.slug !== 'undefined' && doc.mp.slug) {
         return '' + doc.mp.slug;
     } else if (typeof doc.properties['mp-slug'] !== 'undefined' && doc.properties['mp-slug']) {
         return '' + doc.properties['mp-slug'];
@@ -185,7 +171,7 @@ const getContent = function (doc) {
       }
 };
 
-const syndicate_mast = function (doc) {
+const syndicate_mast = function (doc, file_name) {
     if (isEmpty(doc.properties['mp-syndicate-to']) &&
         (doc.mp === undefined || isEmpty(doc.mp['syndicate-to']))) {
         return Promise.resolve('');
@@ -197,9 +183,10 @@ const syndicate_mast = function (doc) {
     if (syndicate_to.indexOf(config.mastodon_instance) !== -1) {
         return getContent(doc).then(content => {
             let MASTO_API = config.mastodon_instance + 'api/v1/statuses';
+            let post_url = config.site_url + '/' + file_name;
             content = removeMd(content);
-            content = content.substr(0, 512);
             content = encodeURIComponent(content);
+            content = content.substr(0, 500 - post_url.length) + " " + post_url;
             let options = {
                 url: MASTO_API,
                 body: 'status=' + content,
@@ -223,7 +210,7 @@ const syndicate_mast = function (doc) {
     }
 };
 
-const syndicate_twit = function (doc) {
+const syndicate_twit = function (doc, file_name) {
     if (isEmpty(doc.properties['mp-syndicate-to']) &&
         (doc.mp === undefined || isEmpty(doc.mp['syndicate-to']))) {
         return Promise.resolve('\n');
@@ -234,8 +221,9 @@ const syndicate_twit = function (doc) {
         : doc.mp['syndicate-to']);
     if (syndicate_to.indexOf(config.twitter_instance) !== -1) {
         return getContent(doc).then(content => {
+            let post_url = config.site_url + '/' + file_name;
             content = removeMd(content);
-            content = content.substr(0, 280);
+            content = content.substr(0, 275 - post_url.length) + " " + post_url;
             let client = new Twitter({
                 consumer_key: config.twitter_api_key,
                 consumer_secret: config.twitter_api_secret,
@@ -260,13 +248,13 @@ const syndicate_twit = function (doc) {
     }
 };
 
-const getFileContent = function (doc) {
+const getFileContent = function (doc, file_name) {
     return Promise.all([
         getMetadata(doc),
         getTitle(doc),
         handleFiles(doc),
-        syndicate_mast(doc),
-        syndicate_twit(doc),
+        syndicate_mast(doc, file_name),
+        syndicate_twit(doc, file_name),
         getContent(doc)
       ])
         .then(result => result.filter(value => !!value).join('\n'));
@@ -291,18 +279,14 @@ app.use('/micropub', micropub({
     handler: function (micropubDocument, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(micropubDocument));
 
-        let temp_file_name = getFileNameTest(micropubDocument);
+        let file_name = getFileName(micropubDocument);
         return Promise.resolve().then(() => {
-            console.log("First Promise - " + temp_file_name);
             return Promise.all([
-                //getFileName(micropubDocument),
                 getFilePath(micropubDocument),
-                getFileContent(micropubDocument)
+                getFileContent(micropubDocument, file_name)
             ]);
         })
         .then(result => {
-            console.log("Second Promise - " + temp_file_name);
-            let file_name = temp_file_name;
             let path = result[0];
             let content = result[1];
 
