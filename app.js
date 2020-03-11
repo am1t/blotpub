@@ -283,6 +283,9 @@ app.use('/micropub', micropub({
             return config_res;
         } else if (q === 'syndicate-to') {
             return config.syndicate_to ? { 'syndicate-to': config.syndicate_to } : undefined;
+        } else if (q === 'source') {
+            console.log('Received request for updating post - ' + req.url);
+            return undefined;
         }
     },
     handler: function (micropubDocument, req) {
