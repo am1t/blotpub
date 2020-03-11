@@ -39,6 +39,20 @@ const getFileName = function (doc) {
     }
 };
 
+const getFileNameTest = function (doc) {
+    if (doc.mp && typeof doc.mp.slug !== 'undefined' && doc.mp.slug) {
+        return '' + doc.mp.slug;
+    } else if (typeof doc.properties['mp-slug'] !== 'undefined' && doc.properties['mp-slug']) {
+        return '' + doc.properties['mp-slug'];
+    } else {
+        if (typeof doc.properties.name !== 'undefined' && doc.properties.name && doc.properties.name[0] !== '') {
+            return kebabCase(doc.properties.name[0].trim());
+        } else {
+            return '' + Date.now();
+        }
+    }
+};
+
 const getFilePath = function (doc) {
     if (doc.properties.name !== undefined && doc.properties.name[0] !== '') {
         return Promise.resolve(config.post_path);
@@ -277,20 +291,20 @@ app.use('/micropub', micropub({
     handler: function (micropubDocument, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(micropubDocument));
 
-        let temp_file_name = getFileName(micropubDocument);
+        let temp_file_name = getFileNameTest(micropubDocument);
         return Promise.resolve().then(() => {
             console.log("First Promise - " + temp_file_name);
             return Promise.all([
-                getFileName(micropubDocument),
+                //getFileName(micropubDocument),
                 getFilePath(micropubDocument),
                 getFileContent(micropubDocument)
             ]);
         })
         .then(result => {
             console.log("Second Promise - " + temp_file_name);
-            let file_name = result[0];
-            let path = result[1];
-            let content = result[2];
+            let file_name = temp_file_name;
+            let path = result[0];
+            let content = result[1];
 
             return dbx.filesUpload({ path: path + file_name + '.md', contents: content })
             .then(function (response) {
