@@ -293,7 +293,7 @@ app.use('/micropub', micropub({
             let file_response = {};
             dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
             .then(function (res) {
-                let file_content = res.fileBinary;
+                let file_content = res.fileBinary + '';
                 let file_content_lines = file_content.split(/\r?\n/);
                 file_response = {'type': ['h-entry']};
                 file_response.properties = {};
