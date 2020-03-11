@@ -277,7 +277,9 @@ app.use('/micropub', micropub({
     handler: function (micropubDocument, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(micropubDocument));
 
+        let temp_file_name = getFileName(micropubDocument);
         return Promise.resolve().then(() => {
+            console.log("First Promise - " + temp_file_name);
             return Promise.all([
                 getFileName(micropubDocument),
                 getFilePath(micropubDocument),
@@ -285,6 +287,7 @@ app.use('/micropub', micropub({
             ]);
         })
         .then(result => {
+            console.log("Second Promise - " + temp_file_name);
             let file_name = result[0];
             let path = result[1];
             let content = result[2];
