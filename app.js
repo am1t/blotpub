@@ -290,22 +290,33 @@ app.use('/micropub', micropub({
             }
             console.log('Received request for updating post ' + file_name);
             console.log('Trying to fetch file from dropbox - ' + config.micro_post_path + file_name + '.md');
+            let file_response = {};
             dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
             .then(function (res) {
-                console.log('File content ' + res);
-                console.log('File content - binary ' + res.name);
-                console.log('File content - binary ' + res.fileBinary);
-                //console.log('File content string ' + content.stringify());
-                /* let reader = new global.FileReader();
-                reader.addEventListener('loadend', function () {
-                    console.log(reader.result);
+                let file_content = res.fileBinary;
+                let file_content_lines = file_content.split(/\r?\n/);
+                file_response = {'type': ['h-entry']};
+                file_response.properties = {};
+                file_response.properties.category = [];
+                file_content_lines.forEach(elm => {
+                    if (elm.indexOf('title :') !== -1 && elm.indexOf('-title') === -1) {
+                        file_response.properties.name = elm.split(':')[1].trim();
+                    } else if (elm.indexOf('date :') !== -1) {
+                        file_response.properties.published = [elm.split(':')[1].trim()];
+                    } else if (elm.indexOf('tags :') !== -1) {
+                        elm.split(':')[1].trim().split(',').forEach(tag => {
+                            file_response.properties.category.push(tag.trim());
+                        });
+                    }
                 });
-                reader.readAsText(content); */
+                file_response.properties['mp-slug'] = 'filename';
+                file_response.properties.content = file_content.split(/\r?\n\n/)[1];
+                console.log(JSON.stringify(file_response));
             })
             .catch(function (error) {
                 console.error('Failed to read file' + error);
             });
-            return undefined;
+            return file_response;
         }
     },
     handler: function (micropubDocument, req) {
