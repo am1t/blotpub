@@ -185,12 +185,12 @@ const syndicate_mast = function (doc, file_name) {
             let MASTO_API = config.mastodon_instance + 'api/v1/statuses';
             let post_url = config.site_url + '/' + file_name;
             content = removeMd(content);
-            content = encodeURIComponent(content);
             if(content.length > 512) { 
                 content = content.substr(0, 500 - post_url.length);
-                content = content.substr(0, Math.min(content.length, content.lastIndexOf("%20")));
+                content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
                 content = content + ".. " + post_url;
             }
+            content = encodeURIComponent(content);
             let options = {
                 url: MASTO_API,
                 body: 'status=' + content,
