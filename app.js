@@ -284,7 +284,24 @@ app.use('/micropub', micropub({
         } else if (q === 'syndicate-to') {
             return config.syndicate_to ? { 'syndicate-to': config.syndicate_to } : undefined;
         } else if (q === 'source') {
-            console.log('Received request for updating post - ' + req.url);
+            let file_name = decodeURIComponent(req.query.url).split(config.site_url + '/')[1];
+            if (file_name.indexOf('/') !== -1) {
+                file_name = file_name.split('/');
+            }
+            console.log('Trying to fetch file from dropbox - ' + config.micro_post_path + file_name + '.md');
+            dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
+            .then(function (res) {
+                let content = res.fileBlob;
+                let reader = new global.FileReader();
+                reader.addEventListener('loadend', function () {
+                    console.log(reader.result);
+                });
+                reader.readAsText(content);
+            })
+            .catch(function (error) {
+                console.error('Failed to read file' + error);
+            });
+            console.log('Received request for updating post - ' + file_name);
             return undefined;
         }
     },
