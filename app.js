@@ -188,7 +188,7 @@ const syndicate_mast = function (doc, file_name) {
             content = encodeURIComponent(content);
             if(content.length > 512) { 
                 content = content.substr(0, 500 - post_url.length);
-                content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
+                content = content.substr(0, Math.min(content.length, content.lastIndexOf("%20")));
                 content = content + ".. " + post_url;
             }
             let options = {
