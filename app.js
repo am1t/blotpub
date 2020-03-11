@@ -290,9 +290,9 @@ app.use('/micropub', micropub({
             }
             console.log('Received request for updating post ' + file_name);
             console.log('Trying to fetch file from dropbox - ' + config.micro_post_path + file_name + '.md');
-            let file_response = {};
             dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
             .then(function (res) {
+                let file_response = {};
                 let file_content = res.fileBinary + '';
                 let file_content_lines = file_content.split(/\r?\n/);
                 file_response = {'type': ['h-entry']};
@@ -312,11 +312,11 @@ app.use('/micropub', micropub({
                 file_response.properties['mp-slug'] = file_name;
                 file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
                 console.log(JSON.stringify(file_response));
+                return file_response;
             })
             .catch(function (error) {
                 console.error('Failed to read file' + error);
             });
-            return file_response;
         }
     },
     handler: function (micropubDocument, req) {
