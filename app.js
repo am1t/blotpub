@@ -185,10 +185,10 @@ const syndicate_mast = function (doc, file_name) {
             let MASTO_API = config.mastodon_instance + 'api/v1/statuses';
             let post_url = config.site_url + '/' + file_name;
             content = removeMd(content);
-            if(content.length > 512) { 
+            if (content.length > 512) {
                 content = content.substr(0, 500 - post_url.length);
-                content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
-                content = content + ".. " + post_url;
+                content = content.substr(0, Math.min(content.length, content.lastIndexOf(' ')));
+                content = content + '.. ' + post_url;
             }
             content = encodeURIComponent(content);
             let options = {
@@ -227,12 +227,12 @@ const syndicate_twit = function (doc, file_name) {
         return getContent(doc).then(content => {
             let post_url = config.site_url + '/' + file_name;
             content = removeMd(content);
-            if(content.length > 280){
+            if (content.length > 280) {
                 content = content.substr(0, 275 - post_url.length);
-                content = content.substr(0, Math.min(content.length, content.lastIndexOf(" ")));
-                content = content + ".. " + post_url;
+                content = content.substr(0, Math.min(content.length, content.lastIndexOf(' ')));
+                content = content + '.. ' + post_url;
             }
-            
+
             let client = new Twitter({
                 consumer_key: config.twitter_api_key,
                 consumer_secret: config.twitter_api_secret,
