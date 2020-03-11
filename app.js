@@ -309,8 +309,8 @@ app.use('/micropub', micropub({
                         });
                     }
                 });
-                file_response.properties['mp-slug'] = 'filename';
-                file_response.properties.content = file_content.split(/\r?\n\n/)[1];
+                file_response.properties['mp-slug'] = file_name;
+                file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
                 console.log(JSON.stringify(file_response));
             })
             .catch(function (error) {
