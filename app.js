@@ -292,7 +292,9 @@ app.use('/micropub', micropub({
             console.log('Trying to fetch file from dropbox - ' + config.micro_post_path + file_name + '.md');
             dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
             .then(function (res) {
-                console.log('File content ' + res.stringify());
+                console.log('File content ' + res);
+                console.log('File content - binary ' + res.name);
+                console.log('File content - binary ' + res.fileBinary);
                 //console.log('File content string ' + content.stringify());
                 /* let reader = new global.FileReader();
                 reader.addEventListener('loadend', function () {
