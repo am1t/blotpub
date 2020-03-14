@@ -290,7 +290,7 @@ app.use('/micropub', micropub({
             }
             console.log('Received request for updating post ' + file_name);
             console.log('Trying to fetch file from dropbox - ' + config.micro_post_path + file_name + '.md');
-            dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
+            return dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
             .then(function (res) {
                 let file_response = {};
                 let file_content = res.fileBinary + '';
