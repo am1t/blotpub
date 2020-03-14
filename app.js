@@ -335,41 +335,44 @@ app.use('/micropub', micropub({
         console.log('Generated Micropub Document \n' + JSON.stringify(mp_document));
         let file_name, dbx_post_mode;
         let current_document = {};
-        if (mp_document.action === undefined) {
-            file_name = getFileName(mp_document);
-            dbx_post_mode = 'add';
-            current_document = mp_document;
-        } else {
-            dbx_post_mode = 'overwrite';
-            console.log('Handling the update request');
-            file_name = getFileNameFromURL(mp_document.url);
-            current_document = buildMicropubDocument(file_name);
-            console.log('Built the current micropub document ' + JSON.stringify(current_document));
-            let mp_action_type = ['replace', 'add', 'delete'];
-            mp_action_type.forEach(action_type => {
-                if (action_type in mp_document) {
-                    let action = mp_document[action_type];
-                    console.log('Property to be actioned on ' + JSON.stringify(action));
-                    if (action_type === 'replace' || action_type === 'delete') {
-                        delete current_document.properties[action];
-                        if (action_type === 'replace') {
-                            console.log('Handling the replace action type');
-                            current_document.properties[action] = action;
-                        }
-                    } else if (action_type === 'add') {
-                        console.log('Handling the add action type');
-                        if (!current_document.properties[action]) {
-                            current_document.properties[action] = action;
-                        } else {
-                            action.forEach(value => {
-                                current_document.properties[action].push(value);
-                            });
+        return Promise.resolve().then(() => {
+            if (mp_document.action === undefined) {
+                file_name = getFileName(mp_document);
+                dbx_post_mode = 'add';
+                current_document = mp_document;
+            } else {
+                dbx_post_mode = 'overwrite';
+                console.log('Handling the update request');
+                file_name = getFileNameFromURL(mp_document.url);
+                current_document = buildMicropubDocument(file_name);
+                console.log('Built the current micropub document ' + JSON.stringify(current_document));
+                let mp_action_type = ['replace', 'add', 'delete'];
+                mp_action_type.forEach(action_type => {
+                    if (action_type in mp_document) {
+                        let action = mp_document[action_type];
+                        console.log('Property to be actioned on ' + JSON.stringify(action));
+                        if (action_type === 'replace' || action_type === 'delete') {
+                            delete current_document.properties[action];
+                            if (action_type === 'replace') {
+                                console.log('Handling the replace action type');
+                                current_document.properties[action] = action;
+                            }
+                        } else if (action_type === 'add') {
+                            console.log('Handling the add action type');
+                            if (!current_document.properties[action]) {
+                                current_document.properties[action] = action;
+                            } else {
+                                action.forEach(value => {
+                                    current_document.properties[action].push(value);
+                                });
+                            }
                         }
                     }
-                }
-            });
-        }
-        return Promise.resolve().then(() => {
+                });
+            }
+            return current_document;
+        })
+        .then(() => {
             return Promise.all([
                 getFilePath(current_document),
                 getFileContent(current_document, file_name)
