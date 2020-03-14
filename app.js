@@ -289,7 +289,7 @@ const buildMicropubDocument = function (file_name) {
         file_response = {'type': ['h-entry']};
         file_response.properties = {};
         file_response.properties.category = [];
-        for (let elm in file_content_lines) {
+        file_content_lines.forEach(elm => {
             if (elm.indexOf('title :') !== -1 && elm.indexOf('-title') === -1) {
                 file_response.properties.name = elm.split(':')[1].trim();
             } else if (elm.indexOf('date :') !== -1) {
@@ -299,7 +299,7 @@ const buildMicropubDocument = function (file_name) {
                     file_response.properties.category.push(tag.trim());
                 });
             }
-        }
+        });
         file_response.properties['mp-slug'] = file_name;
         file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
         console.log(JSON.stringify(file_response));
