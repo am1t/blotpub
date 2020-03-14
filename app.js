@@ -305,6 +305,10 @@ app.use('/micropub', micropub({
                         file_response.properties.published = [elm.split(':')[1].trim()];
                     } else if (elm.indexOf('tags :') !== -1) {
                         elm.split(':')[1].trim().split(',').forEach(tag => {
+                            if(req.query.properties === undefined || (req.query.properties 
+                                        && req.query.properties == 'category')) {
+                                console.log("Checking for properties - category");
+                            }
                             file_response.properties.category.push(tag.trim());
                         });
                     }
