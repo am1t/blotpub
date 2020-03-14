@@ -332,12 +332,15 @@ app.use('/micropub', micropub({
     },
     handler: function (mp_document, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(mp_document));
-        let file_name;
+        let file_name, current_document, dbx_post_mode;
         if (mp_document.action === undefined) {
             file_name = getFileName(mp_document);
+            dbx_post_mode = 'add';
+            current_document = mp_document;
         } else {
+            dbx_post_mode = 'overwrite';
             file_name = getFileNameFromURL(mp_document.url);
-            let current_document = buildMicropubDocument(file_name);
+            current_document = buildMicropubDocument(file_name);
             let mp_action_type = ['replace', 'add', 'delete'];
             mp_action_type.forEach(action_type => {
                 if (action_type in mp_document) {
@@ -361,15 +364,15 @@ app.use('/micropub', micropub({
         }
         return Promise.resolve().then(() => {
             return Promise.all([
-                getFilePath(mp_document),
-                getFileContent(mp_document, file_name)
+                getFilePath(current_document),
+                getFileContent(current_document, file_name)
             ]);
         })
         .then(result => {
             let path = result[0];
             let content = result[1];
             // let write_mode
-            return dbx.filesUpload({ path: path + file_name + '.md', contents: content })
+            return dbx.filesUpload({ path: path + file_name + '.md', contents: content, mode: dbx_post_mode })
             .then(function (response) {
                 console.log('Post file uploaded at ' + response.path_lower);
                 return { url: config.site_url + '/' + file_name };
