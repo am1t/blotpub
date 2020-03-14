@@ -269,6 +269,47 @@ const getFileContent = function (doc, file_name) {
         .then(result => result.filter(value => !!value).join('\n'));
 };
 
+const getFileNameFromURL = function (post_url) {
+    let file_name = decodeURIComponent(post_url).split(config.site_url + '/')[1];
+    if (file_name.indexOf('/') !== -1) {
+        file_name = file_name.split('/');
+    }
+    return file_name;
+};
+
+const buildMicropubDocument = function (file_name) {
+    let dbx_file_path = config.micro_post_path + file_name + '.md';
+    console.log('Trying to fetch file from dropbox - ' + dbx_file_path);
+    return dbx.filesDownload({path: dbx_file_path})
+    .then(function (res) {
+        let file_response = {};
+        let file_content = res.fileBinary + '';
+        let file_content_lines = file_content.split(/\r?\n/);
+        file_response = {'type': ['h-entry']};
+        file_response.properties = {};
+        file_response.properties.category = [];
+        file_content_lines.forEach(elm => {
+            if (elm.indexOf('title :') !== -1 && elm.indexOf('-title') === -1) {
+                file_response.properties.name = elm.split(':')[1].trim();
+            } else if (elm.indexOf('date :') !== -1) {
+                file_response.properties.published = [elm.split(':')[1].trim()];
+            } else if (elm.indexOf('tags :') !== -1) {
+                elm.split(':')[1].trim().split(',').forEach(tag => {
+                    file_response.properties.category.push(tag.trim());
+                });
+            }
+        });
+        file_response.properties['mp-slug'] = file_name;
+        file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
+        console.log(JSON.stringify(file_response));
+        return file_response;
+    })
+    .catch(function (error) {
+        console.error('Failed to read file' + error);
+        return {};
+    });
+};
+
 // Micropub endpoint
 app.use('/micropub', micropub({
 
@@ -284,59 +325,50 @@ app.use('/micropub', micropub({
         } else if (q === 'syndicate-to') {
             return config.syndicate_to ? { 'syndicate-to': config.syndicate_to } : undefined;
         } else if (q === 'source') {
-            let file_name = decodeURIComponent(req.query.url).split(config.site_url + '/')[1];
-            if (file_name.indexOf('/') !== -1) {
-                file_name = file_name.split('/');
-            }
-            console.log('Received request for updating post ' + file_name);
-            console.log('Trying to fetch file from dropbox - ' + config.micro_post_path + file_name + '.md');
-            return dbx.filesDownload({path: config.micro_post_path + file_name + '.md'})
-            .then(function (res) {
-                let file_response = {};
-                let file_content = res.fileBinary + '';
-                let file_content_lines = file_content.split(/\r?\n/);
-                file_response = {'type': ['h-entry']};
-                file_response.properties = {};
-                file_response.properties.category = [];
-                file_content_lines.forEach(elm => {
-                    if (elm.indexOf('title :') !== -1 && elm.indexOf('-title') === -1) {
-                        file_response.properties.name = elm.split(':')[1].trim();
-                    } else if (elm.indexOf('date :') !== -1) {
-                        file_response.properties.published = [elm.split(':')[1].trim()];
-                    } else if (elm.indexOf('tags :') !== -1) {
-                        elm.split(':')[1].trim().split(',').forEach(tag => {
-                            if (req.query.properties === undefined || (req.query.properties &&
-                                        req.query.properties === 'category')) {
-                                console.log('Checking for properties - category');
-                            }
-                            file_response.properties.category.push(tag.trim());
-                        });
-                    }
-                });
-                file_response.properties['mp-slug'] = file_name;
-                file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
-                console.log(JSON.stringify(file_response));
-                return file_response;
-            })
-            .catch(function (error) {
-                console.error('Failed to read file' + error);
-            });
+            console.log('Received request for updating post ' + req.query.url);
+            let file_name = getFileNameFromURL(req.query.url);
+            return buildMicropubDocument(file_name);
         }
     },
-    handler: function (micropubDocument, req) {
-        console.log('Generated Micropub Document \n' + JSON.stringify(micropubDocument));
-
-        let file_name = getFileName(micropubDocument);
+    handler: function (mp_document, req) {
+        console.log('Generated Micropub Document \n' + JSON.stringify(mp_document));
+        let file_name;
+        if (mp_document.action === undefined) {
+            file_name = getFileName(mp_document);
+        } else {
+            file_name = getFileNameFromURL(mp_document.url);
+            let current_document = buildMicropubDocument(file_name);
+            let mp_action_type = ['replace', 'add', 'delete'];
+            mp_action_type.forEach(action_type => {
+                if (action_type in mp_document) {
+                    let action = mp_document[action_type];
+                    if (action_type === 'replace' || action_type === 'delete') {
+                        delete current_document.properties[action];
+                        if (action_type === 'replace') {
+                            current_document.properties[action] = action;
+                        }
+                    } else if (action_type === 'add') {
+                        if (!current_document.properties[action]) {
+                            current_document.properties[action] = action;
+                        } else {
+                            action.forEach(value => {
+                                current_document.properties[action].push(value);
+                            });
+                        }
+                    }
+                }
+            });
+        }
         return Promise.resolve().then(() => {
             return Promise.all([
-                getFilePath(micropubDocument),
-                getFileContent(micropubDocument, file_name)
+                getFilePath(mp_document),
+                getFileContent(mp_document, file_name)
             ]);
         })
         .then(result => {
             let path = result[0];
             let content = result[1];
-
+            // let write_mode
             return dbx.filesUpload({ path: path + file_name + '.md', contents: content })
             .then(function (response) {
                 console.log('Post file uploaded at ' + response.path_lower);
