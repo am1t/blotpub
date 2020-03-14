@@ -27,7 +27,7 @@
     "express": "^4.16.3",
     "isomorphic-fetch": "^2.2.1",
     "lodash.kebabcase": "^4.1.1",
-    "micropub-express": "git://github.com/am1t/node-micropub-express.git#2e1bc0fab4d23d72a711e0061186574b74569806",
+    "micropub-express": "git://github.com/am1t/node-micropub-express.git#ede0621ae99142ee9d3011852c4711f572ef1297",
     "remove-markdown": "^0.3.0",
     "request": "^2.87.0",
     "twitter": "^1.7.1"
