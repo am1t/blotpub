@@ -282,6 +282,7 @@ const buildMicropubDocument = function (file_name) {
     console.log('Trying to fetch file from dropbox - ' + dbx_file_path);
     return dbx.filesDownload({path: dbx_file_path})
     .then(function (res) {
+        console.log('Fetched the contents of the file from dropbox');
         let file_response = {};
         let file_content = res.fileBinary + '';
         let file_content_lines = file_content.split(/\r?\n/);
@@ -305,7 +306,7 @@ const buildMicropubDocument = function (file_name) {
         return file_response;
     })
     .catch(function (error) {
-        console.error('Failed to read file' + error);
+        console.log('Failed to read file' + error);
         return {};
     });
 };
@@ -332,7 +333,8 @@ app.use('/micropub', micropub({
     },
     handler: function (mp_document, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(mp_document));
-        let file_name, current_document, dbx_post_mode;
+        let file_name, dbx_post_mode;
+        let current_document = {};
         if (mp_document.action === undefined) {
             file_name = getFileName(mp_document);
             dbx_post_mode = 'add';
@@ -347,7 +349,7 @@ app.use('/micropub', micropub({
             mp_action_type.forEach(action_type => {
                 if (action_type in mp_document) {
                     let action = mp_document[action_type];
-                    console.log('Property to be actioned on ' + action);
+                    console.log('Property to be actioned on ' + JSON.stringify(action));
                     if (action_type === 'replace' || action_type === 'delete') {
                         delete current_document.properties[action];
                         if (action_type === 'replace') {
