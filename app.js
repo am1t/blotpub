@@ -257,11 +257,22 @@ const syndicate_twit = function (doc, file_name) {
     }
 };
 
-const getFileContent = function (doc, file_name) {
+const appendCustom = function (custom_metadata) {
+    return Promise.resolve().then(() => {
+        let custom_properties = '';
+        custom_metadata.forEach(metadata => {
+            custom_properties += metadata + '\n';
+        });
+        return custom_properties.trim();
+    });
+};
+
+const getFileContent = function (doc, file_name, custom_metadata) {
     return Promise.all([
         getMetadata(doc),
         getTitle(doc),
         handleFiles(doc),
+        appendCustom(custom_metadata),
         syndicate_mast(doc, file_name),
         syndicate_twit(doc, file_name),
         getContent(doc)
@@ -283,31 +294,36 @@ const buildMicropubDocument = function (file_name) {
     return dbx.filesDownload({path: dbx_file_path})
     .then(res => {
         console.log('Fetched the contents of the file from dropbox');
-        let file_response = {};
+        let file_mp_document = {};
+        let file_custom_metadata = [];
         let file_content = res.fileBinary + '';
         let file_content_lines = file_content.split(/\r?\n/);
-        file_response = {'type': ['h-entry']};
-        file_response.properties = {};
-        file_response.properties.category = [];
+        file_mp_document = {'type': ['h-entry']};
+        file_mp_document.properties = {};
+        file_mp_document.properties.category = [];
         file_content_lines.forEach(elm => {
             if (elm.indexOf('title :') !== -1 && elm.indexOf('-title') === -1) {
-                file_response.properties.name = [];
-                file_response.properties.name.push(elm.split(':')[1].trim());
+                file_mp_document.properties.name = [];
+                file_mp_document.properties.name.push(elm.split(':')[1].trim());
             } else if (elm.indexOf('date :') !== -1) {
-                file_response.properties.published = [elm.split(':')[1].trim()];
+                file_mp_document.properties.published = [elm.split('date :')[1].trim()];
             } else if (elm.indexOf('tags :') !== -1) {
                 elm.split(':')[1].trim().split(',').forEach(tag => {
-                    file_response.properties.category.push(tag.trim());
+                    file_mp_document.properties.category.push(tag.trim());
                 });
+            } else if (elm.indexOf(' : ') !== -1) {
+                /* TODO: May need a better way to handle custom metadata as this may
+                   include lines with ' : ' as custom metadata in final file. */
+                file_custom_metadata.push(elm);
             }
         });
-        file_response.properties['mp-slug'] = file_name;
-        file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
-        return file_response;
+        file_mp_document.properties['mp-slug'] = file_name;
+        file_mp_document.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
+        return { 'mpdoc': file_mp_document, 'custom': file_custom_metadata };
     })
     .catch(function (error) {
         console.log('Failed to read file' + error);
-        return {};
+        return {'mpdoc': {}, 'custom': ''};
     });
 };
 
@@ -331,13 +347,14 @@ app.use('/micropub', micropub({
             return buildMicropubDocument(file_name)
             .then(current_document => {
                 console.log('Returning the fetched micropub document ' + JSON.stringify(current_document));
-                return current_document;
+                return current_document.mpdoc;
             });
         }
     },
     handler: function (mp_document, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(mp_document));
         let file_name, dbx_post_mode;
+        let custom_metadata = [];
         return Promise.resolve().then(() => {
             if (mp_document.action === undefined) {
                 file_name = getFileName(mp_document);
@@ -347,7 +364,9 @@ app.use('/micropub', micropub({
                 dbx_post_mode = 'overwrite';
                 console.log('Handling the update request');
                 file_name = getFileNameFromURL(mp_document.url);
-                return buildMicropubDocument(file_name).then(current_document => {
+                return buildMicropubDocument(file_name).then(file_mp_data => {
+                    let current_document = file_mp_data.mpdoc;
+                    custom_metadata = file_mp_data.custom;
                     console.log('Updating the micropub document ' + JSON.stringify(current_document));
                     let mp_action_type = ['replace', 'add', 'delete'];
                     mp_action_type.forEach(action_type => {
@@ -396,7 +415,7 @@ app.use('/micropub', micropub({
         .then(current_document => {
             return Promise.all([
                 getFilePath(current_document),
-                getFileContent(current_document, file_name)
+                getFileContent(current_document, file_name, custom_metadata)
             ]);
         })
         .then(result => {
