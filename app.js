@@ -356,15 +356,18 @@ app.use('/micropub', micropub({
                                 if (action_type === 'replace') {
                                     console.log('Handling the replace action type');
                                     current_document.properties[action] = action;
+                                    console.log('Property  ' + action + ' replaced. New document -' + JSON.stringify(action));
                                 }
                             } else if (action_type === 'add') {
                                 console.log('Handling the add action type');
                                 if (!current_document.properties[action]) {
                                     current_document.properties[action] = action;
+                                    console.log('Property  ' + action + ' added. New document -' + JSON.stringify(action));
                                 } else {
                                     action.forEach(value => {
                                         current_document.properties[action].push(value);
                                     });
+                                    console.log('Property  ' + action + ' updated. New document -' + JSON.stringify(action));
                                 }
                             }
                         }
