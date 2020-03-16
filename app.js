@@ -349,25 +349,26 @@ app.use('/micropub', micropub({
                     let mp_action_type = ['replace', 'add', 'delete'];
                     mp_action_type.forEach(action_type => {
                         if (action_type in mp_document) {
-                            let action = mp_document[action_type];
+                            let action = Object.keys(mp_document[action_type])[0];
+                            let updated_property = mp_document[action_type][action];
                             console.log('Property to be actioned on ' + JSON.stringify(action));
                             if (action_type === 'replace' || action_type === 'delete') {
                                 delete current_document.properties[action];
                                 if (action_type === 'replace') {
                                     console.log('Handling the replace action type');
-                                    current_document.properties[action] = action;
-                                    console.log('Property  ' + action + ' replaced. New document -' + JSON.stringify(action));
+                                    current_document.properties[action] = updated_property;
+                                    console.log('Property  ' + JSON.stringify(action) + ' replaced.');
                                 }
                             } else if (action_type === 'add') {
                                 console.log('Handling the add action type');
                                 if (!current_document.properties[action]) {
-                                    current_document.properties[action] = action;
-                                    console.log('Property  ' + action + ' added. New document -' + JSON.stringify(action));
+                                    current_document.properties[action] = updated_property;
+                                    console.log('Property  ' + JSON.stringify(action) + ' added.');
                                 } else {
-                                    action.forEach(value => {
+                                    updated_property.forEach(value => {
                                         current_document.properties[action].push(value);
                                     });
-                                    console.log('Property  ' + action + ' updated. New document -' + JSON.stringify(action));
+                                    console.log('Property  ' + JSON.stringify(action) + ' updated.');
                                 }
                             }
                         }
