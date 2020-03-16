@@ -303,7 +303,6 @@ const buildMicropubDocument = function (file_name) {
         });
         file_response.properties['mp-slug'] = file_name;
         file_response.properties.content = [file_content.split(/\r?\n\n/)[1].trim()];
-        console.log(JSON.stringify(file_response));
         return file_response;
     })
     .catch(function (error) {
@@ -330,7 +329,10 @@ app.use('/micropub', micropub({
             console.log('Received request for updating post ' + req.query.url);
             let file_name = getFileNameFromURL(req.query.url);
             return buildMicropubDocument(file_name)
-            .then(current_document => { return current_document; });
+            .then(current_document => {
+                console.log('Returning the fetched micropub document ' + JSON.stringify(current_document));
+                return current_document;
+            });
         }
     },
     handler: function (mp_document, req) {
@@ -346,7 +348,7 @@ app.use('/micropub', micropub({
                 console.log('Handling the update request');
                 file_name = getFileNameFromURL(mp_document.url);
                 return buildMicropubDocument(file_name).then(current_document => {
-                    console.log('Fetched the current micropub document ' + JSON.stringify(current_document));
+                    console.log('Updating the micropub document ' + JSON.stringify(current_document));
                     let mp_action_type = ['replace', 'add', 'delete'];
                     mp_action_type.forEach(action_type => {
                         if (action_type in mp_document) {
@@ -375,7 +377,8 @@ app.use('/micropub', micropub({
                                     if (current_document.properties[action].length === updated_property.length) {
                                         delete current_document.properties[action];
                                     } else {
-                                        current_document.properties[action].filter(value => {
+                                        current_document.properties[action] = current_document.properties[action]
+                                        .filter(value => {
                                             return updated_property.indexOf(value) === -1;
                                         });
                                     }
