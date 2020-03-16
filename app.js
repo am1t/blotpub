@@ -374,14 +374,12 @@ app.use('/micropub', micropub({
                             } else if (action_type === 'delete') {
                                 console.log('Handling the delete action type');
                                 if (current_document.properties[action] !== undefined) {
-                                    if (typeof current_document.properties[action] !== 'object') {
-                                        delete current_document.properties[action];
-                                    } else {
-                                        current_document.properties[action] = current_document.properties[action]
-                                        .filter(value => {
-                                            return updated_property.indexOf(value) === -1;
-                                        });
-                                    }
+                                    current_document.properties[action] = current_document.properties[action]
+                                    .filter(value => {
+                                        return updated_property.indexOf(value) === -1;
+                                    });
+                                } else {
+                                    delete current_document.properties[mp_document[action_type]];
                                 }
                             }
                         }
