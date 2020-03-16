@@ -291,7 +291,8 @@ const buildMicropubDocument = function (file_name) {
         file_response.properties.category = [];
         file_content_lines.forEach(elm => {
             if (elm.indexOf('title :') !== -1 && elm.indexOf('-title') === -1) {
-                file_response.properties.name = elm.split(':')[1].trim();
+                file_response.properties.name = [];
+                file_response.properties.name.push(elm.split(':')[1].trim());
             } else if (elm.indexOf('date :') !== -1) {
                 file_response.properties.published = [elm.split(':')[1].trim()];
             } else if (elm.indexOf('tags :') !== -1) {
@@ -345,7 +346,7 @@ app.use('/micropub', micropub({
                 console.log('Handling the update request');
                 file_name = getFileNameFromURL(mp_document.url);
                 return buildMicropubDocument(file_name).then(current_document => {
-                    console.log('Built the current micropub document ' + JSON.stringify(current_document));
+                    console.log('Fetched the current micropub document ' + JSON.stringify(current_document));
                     let mp_action_type = ['replace', 'add', 'delete'];
                     mp_action_type.forEach(action_type => {
                         if (action_type in mp_document) {
@@ -373,6 +374,7 @@ app.use('/micropub', micropub({
                             }
                         }
                     });
+                    console.log('Updated the current document ' + JSON.stringify(current_document));
                     return current_document;
                 })
                 .catch(function (error) {
