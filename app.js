@@ -353,13 +353,11 @@ app.use('/micropub', micropub({
                             let action = Object.keys(mp_document[action_type])[0];
                             let updated_property = mp_document[action_type][action];
                             console.log('Property to be actioned on ' + JSON.stringify(action));
-                            if (action_type === 'replace' || action_type === 'delete') {
+                            if (action_type === 'replace') {
+                                console.log('Handling the replace action type');
                                 delete current_document.properties[action];
-                                if (action_type === 'replace') {
-                                    console.log('Handling the replace action type');
-                                    current_document.properties[action] = updated_property;
-                                    console.log('Property  ' + JSON.stringify(action) + ' replaced.');
-                                }
+                                current_document.properties[action] = updated_property;
+                                console.log('Property  ' + JSON.stringify(action) + ' replaced.');
                             } else if (action_type === 'add') {
                                 console.log('Handling the add action type');
                                 if (!current_document.properties[action]) {
@@ -370,6 +368,17 @@ app.use('/micropub', micropub({
                                         current_document.properties[action].push(value);
                                     });
                                     console.log('Property  ' + JSON.stringify(action) + ' updated.');
+                                }
+                            } else if (action_type === 'delete') {
+                                console.log('Handling the delete action type');
+                                if (current_document.properties[action] !== undefined) {
+                                    if (current_document.properties[action].length === updated_property.length) {
+                                        delete current_document.properties[action];
+                                    } else {
+                                        current_document.properties[action].filter(value => {
+                                            return updated_property.indexOf(value) === -1;
+                                        });
+                                    }
                                 }
                             }
                         }
