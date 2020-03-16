@@ -344,7 +344,7 @@ app.use('/micropub', micropub({
                 dbx_post_mode = 'overwrite';
                 console.log('Handling the update request');
                 file_name = getFileNameFromURL(mp_document.url);
-                buildMicropubDocument(file_name).then(current_document => {
+                return buildMicropubDocument(file_name).then(current_document => {
                     console.log('Built the current micropub document ' + JSON.stringify(current_document));
                     let mp_action_type = ['replace', 'add', 'delete'];
                     mp_action_type.forEach(action_type => {
