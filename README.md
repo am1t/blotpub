@@ -12,13 +12,14 @@ Currently, the endpoint supports the following.
 * Support for syndicating posts to Mastodon. Added as metadata `mastodon-link`
 * Support for syndicating posts to Twitter. Added as metadata `twitter-link`
 * In-built media endpoint available at `/micropub/media`
+* Support for updating the posts
 
 A step-by-step setup guide is available at [the introduction blog post](https://blog.amitgawande.com/micropub-endpoint-for-blot). [Full implementation report](https://micropub.rocks/implementation-reports/servers/265/WkpcEN4FhqpE4HN6La7E) is available on [micropub.rocks](https://micropub.rocks/)
 
 ## TODO
 * [x] Add support for media endpoint
-* [ ] Implement repost, bookmark post types
-* [ ] Add support for updating and deleting the posts
+* ~~[ ] Implement repost, bookmark post types~~
+* [x] Add support for updating ~~and deleting the posts~~
 
 ## Requirements
 Requires at least Node.js 6.0.0.
