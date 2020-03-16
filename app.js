@@ -281,7 +281,7 @@ const buildMicropubDocument = function (file_name) {
     let dbx_file_path = config.micro_post_path + file_name + '.md';
     console.log('Trying to fetch file from dropbox - ' + dbx_file_path);
     return dbx.filesDownload({path: dbx_file_path})
-    .then(function (res) {
+    .then(res => {
         console.log('Fetched the contents of the file from dropbox');
         let file_response = {};
         let file_content = res.fileBinary + '';
@@ -328,51 +328,56 @@ app.use('/micropub', micropub({
         } else if (q === 'source') {
             console.log('Received request for updating post ' + req.query.url);
             let file_name = getFileNameFromURL(req.query.url);
-            return buildMicropubDocument(file_name);
+            return buildMicropubDocument(file_name)
+            .then(current_document => { return current_document; });
         }
     },
     handler: function (mp_document, req) {
         console.log('Generated Micropub Document \n' + JSON.stringify(mp_document));
         let file_name, dbx_post_mode;
-        let current_document = {};
         return Promise.resolve().then(() => {
             if (mp_document.action === undefined) {
                 file_name = getFileName(mp_document);
                 dbx_post_mode = 'add';
-                current_document = mp_document;
+                return mp_document;
             } else {
                 dbx_post_mode = 'overwrite';
                 console.log('Handling the update request');
                 file_name = getFileNameFromURL(mp_document.url);
-                current_document = buildMicropubDocument(file_name);
-                console.log('Built the current micropub document ' + JSON.stringify(current_document));
-                let mp_action_type = ['replace', 'add', 'delete'];
-                mp_action_type.forEach(action_type => {
-                    if (action_type in mp_document) {
-                        let action = mp_document[action_type];
-                        console.log('Property to be actioned on ' + JSON.stringify(action));
-                        if (action_type === 'replace' || action_type === 'delete') {
-                            delete current_document.properties[action];
-                            if (action_type === 'replace') {
-                                console.log('Handling the replace action type');
-                                current_document.properties[action] = action;
-                            }
-                        } else if (action_type === 'add') {
-                            console.log('Handling the add action type');
-                            if (!current_document.properties[action]) {
-                                current_document.properties[action] = action;
-                            } else {
-                                action.forEach(value => {
-                                    current_document.properties[action].push(value);
-                                });
+                buildMicropubDocument(file_name).then(current_document => {
+                    console.log('Built the current micropub document ' + JSON.stringify(current_document));
+                    let mp_action_type = ['replace', 'add', 'delete'];
+                    mp_action_type.forEach(action_type => {
+                        if (action_type in mp_document) {
+                            let action = mp_document[action_type];
+                            console.log('Property to be actioned on ' + JSON.stringify(action));
+                            if (action_type === 'replace' || action_type === 'delete') {
+                                delete current_document.properties[action];
+                                if (action_type === 'replace') {
+                                    console.log('Handling the replace action type');
+                                    current_document.properties[action] = action;
+                                }
+                            } else if (action_type === 'add') {
+                                console.log('Handling the add action type');
+                                if (!current_document.properties[action]) {
+                                    current_document.properties[action] = action;
+                                } else {
+                                    action.forEach(value => {
+                                        current_document.properties[action].push(value);
+                                    });
+                                }
                             }
                         }
-                    }
+                    });
+                    return current_document;
+                })
+                .catch(function (error) {
+                    console.log('Failed to build the document from  file' + error);
+                    return {};
                 });
             }
-            return current_document;
         })
-        .then(() => {
+        .then(current_document => {
             return Promise.all([
                 getFilePath(current_document),
                 getFileContent(current_document, file_name)
