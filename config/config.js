@@ -34,7 +34,10 @@ const config = {
     twitter_api_secret: env['TWITTER_API_SECRET'],
     twitter_access: env['TWITTER_ACCESS_TOKEN'],
     twitter_access_secret: env['TWITTER_ACCESS_TOKEN_SECRET'],
-    media_endpoint: env['MEDIA_ENDPOINT']
+    media_endpoint: env['MEDIA_ENDPOINT'],
+    telegraph_webmention_ep: 'https://telegraph.p3k.io/webmention',
+    mb_webmention_ep: 'https://micro.blog/webmention',
+    telegraph_token: env['TELEGRAPH_TOKEN']
 };
 
 module.exports = config;

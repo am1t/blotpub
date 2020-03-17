@@ -91,7 +91,11 @@
       "TWITTER_ACCESS_TOKEN_SECRET": {
         "description": "Twitter Developer's Access Token Secret",
         "required": false
-      }                      
+      },
+      "TELEGRAPH_TOKEN": {
+        "description": "Access Token for the Telegraph API",
+        "required": false
+      }
     },
     "buildpacks": [
       {

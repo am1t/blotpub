@@ -17,6 +17,8 @@ const app = express();
 app.disable('x-powered-by');
 
 let dbx = new Dropbox({ accessToken: config.dropbox_token });
+let post_type = '';
+let trgt_url = '';
 
 const isEmpty = function (value) {
     if (typeof value === 'undefined' && !value) { return true; }
@@ -96,9 +98,13 @@ const getTitle = function (doc) {
     if (doc.properties['in-reply-to'] && doc.properties['in-reply-to'][0] !== '') {
         url = doc.properties['in-reply-to'][0];
         titlePre = 'in-reply-to-title';
+        post_type = 'in-reply-to';
+        trgt_url = url;
     } else if (doc.properties['like-of'] && doc.properties['like-of'][0] !== '') {
         url = doc.properties['like-of'][0];
         titlePre = 'like-of-title';
+        post_type = 'like-of';
+        trgt_url = url;
     } else {
         return Promise.resolve('');
     }
@@ -327,6 +333,64 @@ const buildMicropubDocument = function (file_name) {
     });
 };
 
+const timer = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const sendTelegraphWebmention = function (src_url) {
+    let options = {
+        url: config.telegraph_webmention_ep,
+        form: {
+            source: src_url,
+            target: trgt_url,
+            token: config.telegraph_token
+        }
+    };
+    return new Promise((resolve, reject) => {
+        request.post(options, function (error, response, body) {
+            if (error || ([201, 202].indexOf(response.statusCode) === -1)) {
+                console.log('Failed to send webmention to Telegraph. Status Code - ' +
+                    JSON.stringify(response.body.error));
+                resolve('');
+            } else {
+                console.log('Successfully sent webmention to Telegraph');
+                resolve('telegraph');
+            }
+        });
+    });
+};
+
+const sendMBWebmention = function (src_url) {
+    if (post_type === 'in-reply-to') {
+        let options = {
+            url: config.mb_webmention_ep,
+            body: 'source=' + src_url +
+                '&target=' + trgt_url
+        };
+        return new Promise((resolve, reject) => {
+            request.post(options, function (error, response, body) {
+                if (error || ([201, 202].indexOf(response.statusCode) === -1)) {
+                    console.log('Failed to send webmention to Micro.blog. Status Code - ' +
+                        JSON.stringify(response.body));
+                    resolve('');
+                } else {
+                    console.log('Successfully sent webmention to Micro.blog');
+                    resolve('micro.blog');
+                }
+            });
+        });
+    }
+};
+
+const handleWebmentions = function (src_url) {
+    if (post_type !== '') {
+        return Promise.all([
+            sendMBWebmention(src_url),
+            sendTelegraphWebmention(src_url)
+        ]);
+    } else {
+        return Promise.resolve('');
+    }
+};
+
 // Micropub endpoint
 app.use('/micropub', micropub({
 
@@ -425,7 +489,12 @@ app.use('/micropub', micropub({
             return dbx.filesUpload({ path: path + file_name + '.md', contents: content, mode: dbx_post_mode })
             .then(function (response) {
                 console.log('Post file uploaded at ' + response.path_lower);
-                return { url: config.site_url + '/' + file_name };
+                return timer(3000).then(_ => {
+                    return handleWebmentions(config.site_url + '/' + file_name);
+                })
+                .then(res => {
+                    return { url: config.site_url + '/' + file_name };
+                });
             })
             .catch(function (err) {
                 console.log(err);

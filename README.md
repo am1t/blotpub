@@ -68,6 +68,7 @@ Variable | Description
 `TWITTER_API_SECRET` | (Optional) Twitter Developer's Consumer API Secret
 `TWITTER_ACCESS_TOKEN` | (Optional) Twitter Developer's Access Token
 `TWITTER_ACCESS_TOKEN_SECRET` | (Optional) Twitter Developer's Access Token Secret
+`TELEGRAPH_TOKEN` | (Optional) Access Token for the Telegraph API. If set, webmentions would be sent for reply and like post types
 
 ## Modules used
 * [micropub-express](https://github.com/voxpelli/node-micropub-express) – an [Express](http://expressjs.com/) Micropub endpoint that accepts and verifies Micropub requests and calls a callback with a parsed `micropubDocument`.
