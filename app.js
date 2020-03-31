@@ -68,6 +68,12 @@ const getMetadata = function (doc) {
         metadata += 'tags : ' + config.default_tag + '\n';
     }
 
+    if (doc.properties.rsvp) {
+        if (Array.isArray(doc.properties.rsvp)) {
+            metadata += 'rsvp : ' + doc.properties.rsvp[0] + '\n';
+        }
+    }
+
     if (doc.properties.photo) {
         if (Array.isArray(doc.properties.photo)) {
             if (doc.properties.photo[0].value) {
